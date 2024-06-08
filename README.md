@@ -21,8 +21,8 @@ Asterisk denotes an optional exercise
 - [x] 1.8
 - [x] 1.9
 - [x] 1.10
-- [ ] 1.11*
-- [ ] 1.12*
+- [x] 1.11*
+- [x] 1.12*
 - [ ] 1.13*
 - [ ] 1.14*
 
