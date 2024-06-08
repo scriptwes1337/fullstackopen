@@ -7,7 +7,7 @@ const Statistics = ({ good, neutral, bad, all, average, positive }) => {
       <StatisticLine text={"good"} value={good} />
       <StatisticLine text={"neutral"} value={neutral} />
       <StatisticLine text={"bad"} value={bad} />
-      <StatisticLine text={"all"} value={all}/>
+      <StatisticLine text={"all"} value={all} />
       <StatisticLine text={"average"} value={average} />
       <StatisticLine text={"positive"} value={positive + "%"} />
     </>
@@ -17,9 +17,10 @@ const Statistics = ({ good, neutral, bad, all, average, positive }) => {
 const StatisticLine = ({ text, value }) => {
   return (
     <>
-      <p>
-        {text} {value}
-      </p>
+      <tr>
+        <td>{text}</td>
+        <td>{value}</td>
+      </tr>
     </>
   );
 };
@@ -61,7 +62,14 @@ function App() {
       {good === 0 && neutral === 0 && bad === 0 ? (
         <p>No feedback given</p>
       ) : (
-        <Statistics good={good} neutral={neutral} bad={bad} all={all} average={average} positive={positive}/>
+        <Statistics
+          good={good}
+          neutral={neutral}
+          bad={bad}
+          all={all}
+          average={average}
+          positive={positive}
+        />
       )}
     </>
   );
