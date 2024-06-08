@@ -1,15 +1,33 @@
 import { useState } from "react";
 
-const Statistics = ({ good, neutral, bad }) => {
+const Statistics = ({ good, neutral, bad, all, average, positive }) => {
   return (
     <>
       <h1>statistics</h1>
-      <p>good {good}</p>
-      <p>neutral {neutral}</p>
-      <p>bad {bad}</p>
-      <p>all {good + neutral + bad}</p>
-      <p>average {(good - bad) / (good + neutral + bad)}</p>
-      <p>positive {good / (good + neutral + bad)}%</p>
+      <StatisticLine text={"good"} value={good} />
+      <StatisticLine text={"neutral"} value={neutral} />
+      <StatisticLine text={"bad"} value={bad} />
+      <StatisticLine text={"all"} value={all}/>
+      <StatisticLine text={"average"} value={average} />
+      <StatisticLine text={"positive"} value={positive + "%"} />
+    </>
+  );
+};
+
+const StatisticLine = ({ text, value }) => {
+  return (
+    <>
+      <p>
+        {text} {value}
+      </p>
+    </>
+  );
+};
+
+const Button = ({ buttonName, handleVote }) => {
+  return (
+    <>
+      <button onClick={() => handleVote(buttonName)}>{buttonName}</button>
     </>
   );
 };
@@ -30,14 +48,21 @@ function App() {
     }
   };
 
+  let all = good + neutral + bad;
+  let average = (good - bad) / (good + neutral + bad);
+  let positive = (good / (good + neutral + bad)) * 100;
+
   return (
     <>
       <h1>give feedback</h1>
-      <button onClick={() => handleVote("good")}>good</button>
-      <button onClick={() => handleVote("neutral")}>neutral</button>
-      <button onClick={() => handleVote("bad")}>bad</button>
-      {(good === 0 || neutral === 0 || bad === 0) ? <p>No feedback given</p> : <Statistics good={good} neutral={neutral} bad={bad} />}
-
+      <Button buttonName={"good"} handleVote={handleVote} />
+      <Button buttonName={"neutral"} handleVote={handleVote} />
+      <Button buttonName={"bad"} handleVote={handleVote} />
+      {good === 0 && neutral === 0 && bad === 0 ? (
+        <p>No feedback given</p>
+      ) : (
+        <Statistics good={good} neutral={neutral} bad={bad} all={all} average={average} positive={positive}/>
+      )}
     </>
   );
 }
