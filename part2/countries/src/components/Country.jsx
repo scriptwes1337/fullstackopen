@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 
-export const Country = ({ country, showAll }) => {
+export const Country = ({ country, weatherData }) => {
   const [displayMore, setDisplayMore] = useState(false);
 
   useEffect(() => {
-    if (showAll) {
+    if (weatherData) {
       setDisplayMore(true);
     }
-  }, []);
+  }, [weatherData]);
 
   const handleShowMore = () => {
     setDisplayMore(!displayMore);
@@ -15,7 +15,7 @@ export const Country = ({ country, showAll }) => {
 
   return (
     <div>
-      {displayMore === true ? (
+      {displayMore ? (
         <div>
           <h1>{country.name.common}</h1>
           <p>capital {country.capital}</p>
@@ -27,7 +27,13 @@ export const Country = ({ country, showAll }) => {
             ))}
           </ul>
           <img src={country.flags.png} />
-          <br />
+          {weatherData ? 
+          <div>
+            <h2>Weather in {country.capital}</h2>
+            <p>temperature {weatherData.current.temp_c} Celcius</p>
+            <img src={weatherData.current.condition.icon} />
+            <p>wind {weatherData.current.wind_kph} kph</p>
+          </div> : null}
           <button onClick={handleShowMore}>hide</button>
         </div>
       ) : (

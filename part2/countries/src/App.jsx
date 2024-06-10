@@ -6,8 +6,10 @@ import { Country } from "./components/Country";
 function App() {
   const [countries, setCountries] = useState(null);
   const [filteredCountries, setFilteredCountries] = useState(null);
+  const [weatherData, setWeatherData] = useState(null);
 
   const link = "https://studies.cs.helsinki.fi/restcountries/api/all";
+  const apiKey = import.meta.env.VITE_API_KEY;
 
   useEffect(() => {
     axios
@@ -27,6 +29,17 @@ function App() {
         country.name.common.toLowerCase().includes(e.target.value.toLowerCase())
       )
     );
+    console.log(filteredCountries);
+    if (filteredCountries.length === 1) {
+      axios
+        .get(
+          `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${filteredCountries[0].name.common}`
+        )
+        .then((res) => {
+          setWeatherData(res.data);
+          console.log(weatherData)
+        });
+    }
   };
 
   return (
@@ -42,11 +55,18 @@ function App() {
           <p>Too many countries</p>
         ) : filteredCountries.length === 1 ? (
           filteredCountries.map((country) => (
-            <Country country={country} key={country.name.common} showAll={true} />
+            <Country
+              country={country}
+              key={country.name.common}
+              weatherData={weatherData}
+            />
           ))
         ) : (
           filteredCountries.map((country) => (
-            <Country country={country} key={country.name.common} showAll={false}/>
+            <Country
+              country={country}
+              key={country.name.common}
+            />
           ))
         )}
       </div>

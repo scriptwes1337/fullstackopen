@@ -46,7 +46,7 @@ Asterisk denotes an optional exercise
 - [x] 2.17*
 - [x] 2.18*
 - [x] 2.19*
-- [ ] 2.20*
+- [x] 2.20*
 
 ### Part 3
 - [ ] 3.1
