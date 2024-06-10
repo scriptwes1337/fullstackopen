@@ -64,27 +64,45 @@ router.delete("/api/persons/:id", (req, res) => {
 });
 
 router.post("/api/persons", (req, res) => {
-  const { name, number } = req.body;
+  const { name, number, id } = req.body;
 
   if (!name || !number) {
-    return res.status(404).json({error: "Name or number missing."})
+    return res.status(404).json({ error: "Name or number missing." });
   }
 
-  const checkExistingPerson = persons.find(person => person.name === name)
+  const checkExistingPerson = persons.find((person) => person.name === name);
 
   if (checkExistingPerson) {
-    return res.status(404).json({error: "Person already exists."})
+    return res.status(404).json({ error: "Person already exists." });
   }
 
-  const newId = Math.floor(Math.random() * 1000000) + 1;
   const newPerson = {
     name,
     number,
-    id: newId,
+    id,
   };
   persons.push(newPerson);
 
   res.status(200).json(persons);
+});
+
+router.put("/api/persons/:id", (req, res) => {
+  const requestedId = req.params["id"];
+  const requestedPerson = persons.find(
+    (person) => String(person.id) === String(requestedId)
+  );
+  const requestedPersonIndex = persons.indexOf(requestedPerson);
+
+  const { name, number, id } = req.body;
+
+  const updatedPerson = {
+    name,
+    number,
+    id,
+  };
+  persons[requestedPersonIndex] = updatedPerson;
+
+  res.status(200).json(persons[requestedId]);
 });
 
 module.exports = router;

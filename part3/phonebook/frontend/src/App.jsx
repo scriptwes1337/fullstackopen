@@ -12,7 +12,7 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filteredPersons, setFilteredPersons] = useState(null);
-  const personsLink = "http://localhost:3001/persons";
+  const personsLink = "http://localhost:3001/api/persons";
   const [successMsg, setSuccessMsg] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
 
@@ -54,22 +54,31 @@ const App = () => {
       (person) => person.name === newName
     );
 
+    const newId = Math.floor(Math.random() * 1000000) + 1;
+
     const newPerson = {
       name: newName,
       number: newNumber,
-      id: String(persons.length + 1),
+      id: newId,
     };
 
     if (checkExistingName.length > 0) {
       if (
         confirm(
-          `${e.target.value} is already added to the phonebook, replace the old number with a new one?`
+          `${checkExistingName[0].name} is already added to the phonebook, replace the old number with a new one?`
         )
       ) {
         const existingPerson = persons.find(
           (person) => person.name === newName
         );
-        updatePerson(`${personsLink}/${existingPerson.id}`, newPerson)
+
+        const updatedPerson = {
+          name: existingPerson.name,
+          number: newNumber,
+          id: existingPerson.id,
+        };
+
+        updatePerson(`${personsLink}/${existingPerson.id}`, updatedPerson)
           .then(() => {
             fetchPersons(personsLink)
               .then((res) => {
@@ -87,7 +96,9 @@ const App = () => {
               });
           })
           .catch((error) => {
-            setErrorMsg(`${error.message}: ${newName} has already been removed from the server`);
+            setErrorMsg(
+              `${error.message}: ${newName} has already been removed from the server`
+            );
             setInterval(() => {
               setErrorMsg(null);
             }, 5000);
@@ -96,7 +107,7 @@ const App = () => {
     } else {
       addPerson(personsLink, newPerson)
         .then((res) => {
-          setPersons([...persons, res.data]);
+          fetchPersons(personsLink).then((res) => setPersons(res.data));
           setSuccessMsg(`Added ${newName} successfully`);
           setInterval(() => {
             setSuccessMsg(null);
@@ -112,10 +123,10 @@ const App = () => {
   };
 
   const handleDeletePerson = (e) => {
-    if (confirm(`Delete ${e.target.name}?`)) {
+    if (confirm(`Delete ${e.target.name}?` === true)) {
       deletePerson(personsLink, e.target.id)
         .then(() => {
-          setPersons(persons.filter((person) => person.id !== e.target.id));
+          fetchPersons(personsLink).then((res) => setPersons(res.data));
           setSuccessMsg(`Deleted ${e.target.name} successfully`);
           setInterval(() => {
             setSuccessMsg(null);
