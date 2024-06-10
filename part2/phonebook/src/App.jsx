@@ -5,6 +5,7 @@ import { Persons } from "./components/Persons";
 import { fetchPersons } from "./services/fetchPersons";
 import { addPerson } from "./services/addPerson";
 import { deletePerson } from "./services/deletePerson";
+import { updatePerson } from "./services/updatePerson";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -48,27 +49,46 @@ const App = () => {
     const checkExistingName = persons.filter(
       (person) => person.name === newName
     );
-    if (checkExistingName.length > 0) {
-      return alert(`${newName} is already added to phonebook`);
-    }
 
     const newPerson = {
       name: newName,
       number: newNumber,
       id: String(persons.length + 1),
     };
-    addPerson(personsLink, newPerson).then((res) =>
-      setPersons([...persons, res.data])
-    );
+
+    if (checkExistingName.length > 0) {
+      if (
+        confirm(
+          `${e.target.value} is already added to the phonebook, replace the old number with a new one?`
+        )
+      ) {
+        const existingPerson = persons.find(
+          (person) => person.name === newName
+        );
+        updatePerson(`${personsLink}/${existingPerson.id}`, newPerson).then(
+          () => {
+            fetchPersons(personsLink).then((res) => {
+              setPersons(res.data);
+            });
+          }
+        );
+      }
+    } else {
+      addPerson(personsLink, newPerson).then((res) =>
+        setPersons([...persons, res.data])
+      );
+    }
   };
 
   const handleDeletePerson = (e) => {
     if (confirm(`Delete ${e.target.name}?`)) {
       try {
         deletePerson(personsLink, e.target.id).then((res) => {
-          setPersons(persons.filter((person) => {
-            return person.id !== res.data.id;
-          }));
+          setPersons(
+            persons.filter((person) => {
+              return person.id !== res.data.id;
+            })
+          );
         });
       } catch (error) {
         console.log(`Failed to delete contact: ${error}`);
