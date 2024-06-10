@@ -2,19 +2,21 @@ import { useEffect, useState } from "react";
 import { Filter } from "./components/Filter";
 import { Form } from "./components/Form";
 import { Persons } from "./components/Persons";
-import axios from "axios";
+import { fetchPersons } from "./services/fetchPersons";
+import { addPerson } from "./services/addPerson";
+import { deletePerson } from "./services/deletePerson";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
-  const [filter, setFilter] = useState("");
+  const [, setFilter] = useState("");
   const [filteredPersons, setFilteredPersons] = useState(null);
   const personsLink = "http://localhost:3001/persons";
 
   useEffect(() => {
-    axios.get(personsLink).then((res) => setPersons(res.data))
-  }, [])
+    fetchPersons(personsLink).then((res) => setPersons(res.data));
+  }, []);
 
   const handleNameInput = (e) => {
     setNewName(e.target.value);
@@ -53,11 +55,25 @@ const App = () => {
     const newPerson = {
       name: newName,
       number: newNumber,
+      id: String(persons.length + 1),
     };
-    axios
-      .post(personsLink, newPerson)
-      .then((res) => setPersons([...persons, res.data]));
-    setPersons([...persons, newPerson]);
+    addPerson(personsLink, newPerson).then((res) =>
+      setPersons([...persons, res.data])
+    );
+  };
+
+  const handleDeletePerson = (e) => {
+    if (confirm(`Delete ${e.target.name}?`)) {
+      try {
+        deletePerson(personsLink, e.target.id).then((res) => {
+          setPersons(persons.filter((person) => {
+            return person.id !== res.data.id;
+          }));
+        });
+      } catch (error) {
+        console.log(`Failed to delete contact: ${error}`);
+      }
+    }
   };
 
   return (
@@ -69,7 +85,11 @@ const App = () => {
         handleNumberInput={handleNumberInput}
         handleAddPerson={handleAddPerson}
       />
-      <Persons persons={persons} filteredPersons={filteredPersons} />
+      <Persons
+        persons={persons}
+        filteredPersons={filteredPersons}
+        handleDeletePerson={handleDeletePerson}
+      />
     </div>
   );
 };
