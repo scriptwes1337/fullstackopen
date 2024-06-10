@@ -10,9 +10,10 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState("");
   const [filteredPersons, setFilteredPersons] = useState(null);
+  const personsLink = "http://localhost:3001/persons";
 
   useEffect(() => {
-    axios.get("http://localhost:3001/persons").then((res) => setPersons(res.data))
+    axios.get(personsLink).then((res) => setPersons(res.data))
   }, [])
 
   const handleNameInput = (e) => {
@@ -53,6 +54,9 @@ const App = () => {
       name: newName,
       number: newNumber,
     };
+    axios
+      .post(personsLink, newPerson)
+      .then((res) => setPersons([...persons, res.data]));
     setPersons([...persons, newPerson]);
   };
 
