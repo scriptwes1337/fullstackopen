@@ -14,9 +14,18 @@ const App = () => {
   const [, setFilter] = useState("");
   const [filteredPersons, setFilteredPersons] = useState(null);
   const personsLink = "http://localhost:3001/persons";
+  const [successMsg, setSuccessMsg] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(null);
 
   useEffect(() => {
-    fetchPersons(personsLink).then((res) => setPersons(res.data));
+    fetchPersons(personsLink)
+      .then((res) => setPersons(res.data))
+      .catch((error) => {
+        setErrorMsg(`Failed to fetch persons: ${error.message}`);
+        setInterval(() => {
+          setErrorMsg(null);
+        }, 5000);
+      });
   }, []);
 
   const handleNameInput = (e) => {
@@ -32,11 +41,9 @@ const App = () => {
 
     if (e.target.value !== "") {
       setFilteredPersons(
-        persons.filter((person) => {
-          return person.name
-            .toLowerCase()
-            .includes(e.target.value.toLowerCase());
-        })
+        persons.filter((person) =>
+          person.name.toLowerCase().includes(e.target.value.toLowerCase())
+        )
       );
     } else {
       setFilteredPersons(null);
@@ -65,39 +72,97 @@ const App = () => {
         const existingPerson = persons.find(
           (person) => person.name === newName
         );
-        updatePerson(`${personsLink}/${existingPerson.id}`, newPerson).then(
-          () => {
-            fetchPersons(personsLink).then((res) => {
-              setPersons(res.data);
-            });
-          }
-        );
+        updatePerson(`${personsLink}/${existingPerson.id}`, newPerson)
+          .then(() => {
+            fetchPersons(personsLink)
+              .then((res) => {
+                setPersons(res.data);
+                setSuccessMsg(`Updated ${newName} successfully`);
+                setInterval(() => {
+                  setSuccessMsg(null);
+                }, 5000);
+              })
+              .catch((error) => {
+                setErrorMsg(`Failed to fetch persons: ${error.message}`);
+                setInterval(() => {
+                  setErrorMsg(null);
+                }, 5000);
+              });
+          })
+          .catch((error) => {
+            setErrorMsg(`${error.message}: ${newName} has already been removed from the server`);
+            setInterval(() => {
+              setErrorMsg(null);
+            }, 5000);
+          });
       }
     } else {
-      addPerson(personsLink, newPerson).then((res) =>
-        setPersons([...persons, res.data])
-      );
+      addPerson(personsLink, newPerson)
+        .then((res) => {
+          setPersons([...persons, res.data]);
+          setSuccessMsg(`Added ${newName} successfully`);
+          setInterval(() => {
+            setSuccessMsg(null);
+          }, 5000);
+        })
+        .catch((error) => {
+          setErrorMsg(`Failed to add ${newName}: ${error.message}`);
+          setInterval(() => {
+            setErrorMsg(null);
+          }, 5000);
+        });
     }
   };
 
   const handleDeletePerson = (e) => {
     if (confirm(`Delete ${e.target.name}?`)) {
-      try {
-        deletePerson(personsLink, e.target.id).then((res) => {
-          setPersons(
-            persons.filter((person) => {
-              return person.id !== res.data.id;
-            })
-          );
+      deletePerson(personsLink, e.target.id)
+        .then(() => {
+          setPersons(persons.filter((person) => person.id !== e.target.id));
+          setSuccessMsg(`Deleted ${e.target.name} successfully`);
+          setInterval(() => {
+            setSuccessMsg(null);
+          }, 5000);
+        })
+        .catch((error) => {
+          setErrorMsg(`Failed to delete ${e.target.name}: ${error.message}`);
+          setInterval(() => {
+            setErrorMsg(null);
+          }, 5000);
         });
-      } catch (error) {
-        console.log(`Failed to delete contact: ${error}`);
-      }
     }
   };
 
   return (
     <div>
+      {successMsg === null ? null : (
+        <p
+          style={{
+            color: "green",
+            fontSize: "1.5rem",
+            backgroundColor: "lightgrey",
+            border: "solid 3px darkgreen",
+            padding: "10px",
+            borderRadius: "10px",
+          }}
+        >
+          {successMsg}
+        </p>
+      )}
+      {errorMsg === null ? null : (
+        <p
+          style={{
+            color: "red",
+            fontSize: "1.5rem",
+            backgroundColor: "lightgrey",
+            border: "solid 3px darkred",
+            padding: "10px",
+            borderRadius: "10px",
+          }}
+        >
+          {errorMsg}
+        </p>
+      )}
       <h2>Phonebook</h2>
       <Filter handleFilterInput={handleFilterInput} />
       <Form
