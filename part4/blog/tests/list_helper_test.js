@@ -81,3 +81,15 @@ describe("Exercise 4.5*", () => {
     assert.deepStrictEqual(result, exampleBlogs[2]);
   });
 });
+
+describe("Exercise 4.6*", () => {
+  test("Find the author with the most blogs", () => {
+    const expected = {
+      author: "Robert C. Martin",
+      blogs: 3,
+    };
+    const result = listHelper.mostBlogs(exampleBlogs);
+
+    assert.deepStrictEqual(result, expected);
+  });
+});
