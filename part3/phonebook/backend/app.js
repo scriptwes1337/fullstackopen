@@ -4,6 +4,7 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 const cors = require("cors");
 require("dotenv").config();
+const errorHandler = require("./middleware/errorHandler");
 
 // Import routers
 const personsRouter = require("./routes/persons");
@@ -24,8 +25,12 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(cors());
 app.use(express.static("dist"));
+app.use(errorHandler);
 
 // Use routers
 app.use("/", personsRouter);
+
+// Use error handler
+app.use(errorHandler);
 
 module.exports = app;

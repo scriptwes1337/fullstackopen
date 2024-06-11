@@ -8,7 +8,7 @@ const connectMongo = async () => {
     await mongoose.connect(process.env.MONGO_URI);
     await console.log("Connected to MongoDB");
   } catch (err) {
-    console.error("Failed to connect to MongoDB", err);
+    next(err)
   }
 };
 
@@ -19,7 +19,7 @@ router.get("/api/persons", async (req, res) => {
     let persons = await Person.find();
     res.status(200).json(persons);
   } catch (err) {
-    res.status(500).json({ error: `Server error: ${err}` });
+    next(err);
   }
 });
 
@@ -34,7 +34,7 @@ router.get("/info", async (req, res) => {
     </div>
   `);
   } catch (err) {
-    res.status(500).json({ error: `Server error: ${err}` });
+    next(err);
   }
 });
 
@@ -53,7 +53,7 @@ router.get("/api/persons/:id", async (req, res) => {
       res.status(404).json({ error: "No data found." });
     }
   } catch (err) {
-    res.status(500).json({ error: `Server error: ${err}` });
+    next(err);
   }
 });
 
@@ -68,7 +68,7 @@ router.delete("/api/persons/:id", async (req, res) => {
       res.status(404).json({ error: "Person not found" });
     }
   } catch (err) {
-    res.status(500).json({ error: `Server error: ${err}` });
+    next(err);
   }
 });
 
@@ -95,7 +95,7 @@ router.post("/api/persons", async (req, res) => {
 
     res.status(200).json(response);
   } catch (err) {
-    res.status(500).json({ error: `Server error: ${err}` });
+    next(err);
   }
 });
 
@@ -114,7 +114,7 @@ router.put("/api/persons/:id", async (req, res) => {
 
     res.status(200).json(response);
   } catch (err) {
-    res.status(500).json({ error: `Server error: ${err}` });
+    next(err);
   }
 });
 
