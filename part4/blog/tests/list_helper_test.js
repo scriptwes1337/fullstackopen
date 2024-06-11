@@ -93,3 +93,15 @@ describe("Exercise 4.6*", () => {
     assert.deepStrictEqual(result, expected);
   });
 });
+
+describe("Exercise 4.7*", () => {
+  test("Find  the author with the most likes", () => {
+    const expected = {
+      author: "Edsger W. Dijkstra",
+      likes: 17,
+    };
+    const result = listHelper.mostLikes(exampleBlogs);
+
+    assert.deepStrictEqual(result, expected);
+  });
+});
