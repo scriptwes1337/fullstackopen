@@ -1,0 +1,9 @@
+POST http://localhost:3001/api/blogs
+content-type: application/json
+
+{
+  "title": "How to be rich",
+  "author": "Robert Kiyosaki",
+  "url": "www.scammer.com",
+  "likes": 69
+}
