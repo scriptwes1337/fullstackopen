@@ -8,7 +8,7 @@ const connectMongo = async () => {
     await mongoose.connect(process.env.MONGO_URI);
     await console.log("Connected to MongoDB");
   } catch (err) {
-    next(err)
+    next(err);
   }
 };
 
@@ -80,6 +80,23 @@ router.post("/api/persons", async (req, res) => {
 
     if (!name || !number) {
       return res.status(404).json({ error: "Name or number missing." });
+    }
+
+    if (name.length < 3) {
+      return res
+        .status(404)
+        .json({ error: "Name must be at least 3 characters long." });
+    }
+
+    if (number.length < 8) {
+      return res
+        .status(404)
+        .json({ error: "Number must be at least 8 characters long." });
+    }
+
+    const regex = /^\d{2,3}-\d+$/;
+    if (!regex.test(number)) {
+      return res.status(404).json({error: "Number format is invalid"})
     }
 
     if (checkExistingPerson) {

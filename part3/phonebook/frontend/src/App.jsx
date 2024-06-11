@@ -111,7 +111,8 @@ const App = () => {
           }, 5000);
         })
         .catch((error) => {
-          setErrorMsg(`Failed to add ${newName}: ${error.message}`);
+          console.log(error)
+          setErrorMsg(`Failed to add ${newName}: ${error.response.data.error}`);
           setInterval(() => {
             setErrorMsg(null);
           }, 5000);
