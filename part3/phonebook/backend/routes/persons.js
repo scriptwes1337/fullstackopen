@@ -8,13 +8,13 @@ const connectMongo = async () => {
     await mongoose.connect(process.env.MONGO_URI);
     await console.log("Connected to MongoDB");
   } catch (err) {
-    next(err);
+    console.error("Failed to connect to MongoDB", err);
   }
 };
 
 connectMongo();
 
-router.get("/api/persons", async (req, res) => {
+router.get("/api/persons", async (req, res, next) => {
   try {
     let persons = await Person.find();
     res.status(200).json(persons);
@@ -23,7 +23,7 @@ router.get("/api/persons", async (req, res) => {
   }
 });
 
-router.get("/info", async (req, res) => {
+router.get("/info", async (req, res, next) => {
   try {
     let persons = await Person.find();
 
@@ -38,7 +38,7 @@ router.get("/info", async (req, res) => {
   }
 });
 
-router.get("/api/persons/:id", async (req, res) => {
+router.get("/api/persons/:id", async (req, res, next) => {
   try {
     let persons = await Person.find();
 
@@ -57,7 +57,7 @@ router.get("/api/persons/:id", async (req, res) => {
   }
 });
 
-router.delete("/api/persons/:id", async (req, res) => {
+router.delete("/api/persons/:id", async (req, res, next) => {
   try {
     const requestedId = req.params["id"];
     const response = await Person.findByIdAndDelete(requestedId);
@@ -72,7 +72,7 @@ router.delete("/api/persons/:id", async (req, res) => {
   }
 });
 
-router.post("/api/persons", async (req, res) => {
+router.post("/api/persons", async (req, res, next) => {
   try {
     let persons = await Person.find();
     const { name, number, id } = req.body;
@@ -96,7 +96,7 @@ router.post("/api/persons", async (req, res) => {
 
     const regex = /^\d{2,3}-\d+$/;
     if (!regex.test(number)) {
-      return res.status(404).json({error: "Number format is invalid"})
+      return res.status(404).json({ error: "Number format is invalid" });
     }
 
     if (checkExistingPerson) {
@@ -116,7 +116,7 @@ router.post("/api/persons", async (req, res) => {
   }
 });
 
-router.put("/api/persons/:id", async (req, res) => {
+router.put("/api/persons/:id", async (req, res, next) => {
   try {
     const requestedId = req.params["id"];
     const { name, number, id } = req.body;
