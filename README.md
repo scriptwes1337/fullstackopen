@@ -60,7 +60,7 @@ Asterisk denotes an optional exercise
 - [x] 3.9
 - [x] 3.10
 - [x] 3.11
-- [ ] 3.12
+- [x] 3.12
 - [ ] 3.13
 - [ ] 3.14
 - [ ] 3.15
