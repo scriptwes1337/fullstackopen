@@ -78,8 +78,6 @@ describe("Exercise 4.4", () => {
 describe("Exercise 4.5*", () => {
   test("Find the most liked blog", () => {
     const result = listHelper.favoriteBlog(exampleBlogs);
-    assert.strictEqual(result, exampleBlogs[2])
-  })
+    assert.deepStrictEqual(result, exampleBlogs[2]);
+  });
 });
-
-
