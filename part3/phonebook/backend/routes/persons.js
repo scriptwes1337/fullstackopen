@@ -1,108 +1,121 @@
 const express = require("express");
 const router = express.Router();
+const mongoose = require("mongoose");
+const Person = require("../models/Person");
 
-const persons = [
-  {
-    id: 1,
-    name: "Arto Hellas",
-    number: "040-123456",
-  },
-  {
-    id: 2,
-    name: "Ada Lovelace",
-    number: "39-44-5323523",
-  },
-  {
-    id: 3,
-    name: "Dan Abramov",
-    number: "12-43-234345",
-  },
-  {
-    id: 4,
-    name: "Mary Poppendieck",
-    number: "39-23-6423122",
-  },
-];
+const connectMongo = async () => {
+  try {
+    await mongoose.connect(process.env.MONGO_URI);
+    await console.log("Connected to MongoDB");
+  } catch (err) {
+    console.error("Failed to connect to MongoDB", err);
+  }
+};
 
-router.get("/api/persons", (req, res) => {
-  res.status(200).json(persons);
+connectMongo();
+
+router.get("/api/persons", async (req, res) => {
+  try {
+    let persons = await Person.find();
+    res.status(200).json(persons);
+  } catch (err) {
+    res.status(500).json({ error: `Server error: ${err}` });
+  }
 });
 
-router.get("/info", (req, res) => {
-  res.status(200).send(`
+router.get("/info", async (req, res) => {
+  try {
+    let persons = await Person.find();
+
+    res.status(200).send(`
     <div>
       <p>Phonebook has info for ${persons.length} people</p>
       <p>${new Date()}</p>
     </div>
   `);
-});
-
-router.get("/api/persons/:id", (req, res) => {
-  const requestedId = req.params["id"];
-  const requestedPerson = persons.find(
-    (person) => String(person.id) === String(requestedId)
-  );
-
-  if (requestedPerson) {
-    res.status(200).json(requestedPerson);
-  } else {
-    res.status(404).json({ error: "No data found." });
+  } catch (err) {
+    res.status(500).json({ error: `Server error: ${err}` });
   }
 });
 
-router.delete("/api/persons/:id", (req, res) => {
-  const requestedId = req.params["id"];
-  const requestedPerson = persons.find(
-    (person) => String(person.id) === String(requestedId)
-  );
+router.get("/api/persons/:id", async (req, res) => {
+  try {
+    let persons = await Person.find();
 
-  const requestedPersonIndex = persons.indexOf(requestedPerson);
+    const requestedId = req.params["id"];
+    const requestedPerson = persons.find(
+      (person) => String(person._id) === String(requestedId)
+    );
 
-  persons.splice(requestedPersonIndex, 1);
-
-  res.status(200).json(requestedPerson);
+    if (requestedPerson) {
+      res.status(200).json(requestedPerson);
+    } else {
+      res.status(404).json({ error: "No data found." });
+    }
+  } catch (err) {
+    res.status(500).json({ error: `Server error: ${err}` });
+  }
 });
 
-router.post("/api/persons", (req, res) => {
-  const { name, number, id } = req.body;
+router.delete("/api/persons/:id", async (req, res) => {
+  try {
+    const requestedId = req.params["id"];
+    const response = await Person.findByIdAndDelete(requestedId);
 
-  if (!name || !number) {
-    return res.status(404).json({ error: "Name or number missing." });
+    if (response) {
+      res.status(200).json(response);
+    } else {
+      res.status(404).json({ error: "Person not found" });
+    }
+  } catch (err) {
+    res.status(500).json({ error: `Server error: ${err}` });
   }
-
-  const checkExistingPerson = persons.find((person) => person.name === name);
-
-  if (checkExistingPerson) {
-    return res.status(404).json({ error: "Person already exists." });
-  }
-
-  const newPerson = {
-    name,
-    number,
-    id,
-  };
-  persons.push(newPerson);
-
-  res.status(200).json(persons);
 });
 
-router.put("/api/persons/:id", (req, res) => {
-  const requestedId = req.params["id"];
-  const requestedPerson = persons.find(
-    (person) => String(person.id) === String(requestedId)
-  );
-  const requestedPersonIndex = persons.indexOf(requestedPerson);
+router.post("/api/persons", async (req, res) => {
+  try {
+    let persons = await Person.find();
+    const { name, number, id } = req.body;
+    const checkExistingPerson = persons.find((person) => person.name === name);
 
-  const { name, number, id } = req.body;
+    if (!name || !number) {
+      return res.status(404).json({ error: "Name or number missing." });
+    }
 
-  const updatedPerson = {
-    name,
-    number,
-    id,
-  };
-  persons[requestedPersonIndex] = updatedPerson;
+    if (checkExistingPerson) {
+      return res.status(404).json({ error: "Person already exists." });
+    }
 
-  res.status(200).json(persons[requestedId]);
+    const person = new Person({
+      name,
+      number,
+    });
+
+    const response = await person.save();
+
+    res.status(200).json(response);
+  } catch (err) {
+    res.status(500).json({ error: `Server error: ${err}` });
+  }
+});
+
+router.put("/api/persons/:id", async (req, res) => {
+  try {
+    const requestedId = req.params["id"];
+    const { name, number, id } = req.body;
+
+    const person = {
+      name,
+      number,
+      id,
+    };
+
+    const response = await Person.findByIdAndUpdate(requestedId, person);
+
+    res.status(200).json(response);
+  } catch (err) {
+    res.status(500).json({ error: `Server error: ${err}` });
+  }
 });
 
 module.exports = router;

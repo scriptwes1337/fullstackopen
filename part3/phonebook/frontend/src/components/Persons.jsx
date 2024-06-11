@@ -12,7 +12,7 @@ export const Persons = ({ persons, filteredPersons, handleDeletePerson }) => {
                   {person.name} {person.number}
                   <button
                     name={person.name}
-                    id={person.id}
+                    id={person._id}
                     onClick={handleDeletePerson}
                   >
                     delete

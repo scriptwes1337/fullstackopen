@@ -2,13 +2,17 @@ var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
-const personsRouter = require("./routes/persons");
 const cors = require("cors");
+require("dotenv").config();
 
+// Import routers
+const personsRouter = require("./routes/persons");
+
+// Use express server
 var app = express();
 
+// Middleware
 logger.token("req-body", (req) => JSON.stringify(req.body));
-
 app.use(
   logger(
     ":method :url :status :res[content-length] - :response-time ms :req-body"
@@ -21,6 +25,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(cors());
 app.use(express.static("dist"));
 
+// Use routers
 app.use("/", personsRouter);
 
 module.exports = app;

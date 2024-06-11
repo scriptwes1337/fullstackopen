@@ -54,12 +54,9 @@ const App = () => {
       (person) => person.name === newName
     );
 
-    const newId = Math.floor(Math.random() * 1000000) + 1;
-
     const newPerson = {
       name: newName,
-      number: newNumber,
-      id: newId,
+      number: newNumber
     };
 
     if (checkExistingName.length > 0) {
@@ -75,10 +72,10 @@ const App = () => {
         const updatedPerson = {
           name: existingPerson.name,
           number: newNumber,
-          id: existingPerson.id,
+          _id: existingPerson._id,
         };
 
-        updatePerson(`${personsLink}/${existingPerson.id}`, updatedPerson)
+        updatePerson(`${personsLink}/${existingPerson._id}`, updatedPerson)
           .then(() => {
             fetchPersons(personsLink)
               .then((res) => {
@@ -123,7 +120,7 @@ const App = () => {
   };
 
   const handleDeletePerson = (e) => {
-    if (confirm(`Delete ${e.target.name}?` === true)) {
+    if (confirm(`Delete ${e.target.name}?`)) {
       deletePerson(personsLink, e.target.id)
         .then(() => {
           fetchPersons(personsLink).then((res) => setPersons(res.data));
