@@ -52,9 +52,21 @@ router.post("/", async (req, res, next) => {
 
 router.delete("/:id", async (req, res, next) => {
   try {
+    const decodedToken = jwt.verify(req.token, process.env.SECRET);
+
+    if (!decodedToken.id) {
+      return res.status(401).json({ error: "Token invalid!" });
+    }
+
     const requestedId = req.params["id"];
-    const data = await Blog.findByIdAndDelete(requestedId);
-    res.status(200).json(data);
+    const findBlog = await Blog.findById(requestedId);
+
+    if (decodedToken.id === String(findBlog.user)) {
+      const data = await Blog.findByIdAndDelete(requestedId);
+      res.status(200).json(data);
+    } else {
+      res.status(400).json({error: "You can only delete blogs that you created!"})
+    }
   } catch (err) {
     next(err);
   }
