@@ -46,4 +46,14 @@ router.post("/api/blogs", async (req, res, next) => {
   }
 });
 
+router.delete("/api/blogs/:id", async (req, res, next) => {
+  try {
+    const requestedId = req.params["id"];
+    const data = await Blog.findByIdAndDelete(requestedId);
+    res.status(200).json(data);
+  } catch (err) {
+    next(err);
+  }
+});
+
 module.exports = router;

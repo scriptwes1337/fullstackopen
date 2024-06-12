@@ -156,7 +156,7 @@ describe("Testing the backend", () => {
     const testBlog2 = {
       author: "Test2",
       url: "Test2",
-      title: "Test2"
+      title: "Test2",
     };
 
     await api.post("/api/blogs").send(testBlog2).expect(201);
@@ -189,6 +189,24 @@ describe("Testing the backend", () => {
     const result = await api.post("/api/blogs").send(invalidBlog).expect(400);
 
     assert.strictEqual(result.statusCode, 400);
+  });
+
+  test("4.13: Verifies the backend can delete a single blog resource", async () => {
+    const findTestBlog = await api
+      .get("/api/blogs")
+      .expect("Content-Type", /application\/json/)
+      .expect(200);
+
+    const testBlogId = findTestBlog.body[0].id;
+
+    await api.delete(`/api/blogs/${testBlogId}`).expect(200);
+
+    const result = await api
+      .get("/api/blogs")
+      .expect("Content-Type", /application\/json/)
+      .expect(200);
+
+    assert.strictEqual(result.body.length, 0)
   });
 
   after(async () => {
