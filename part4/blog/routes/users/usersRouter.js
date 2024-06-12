@@ -7,7 +7,7 @@ router.get("/all", async (req, res) => {
   try {
     const allUsers = await User.find();
 
-    res.status(200).json(allUsers)
+    res.status(200).json(allUsers);
   } catch (err) {
     res.status(400).json({ error: err });
   }
@@ -18,8 +18,17 @@ router.post("/register", async (req, res) => {
     const { username, password, name } = req.body;
     const existingUser = await User.findOne({ username });
 
+    // verifies username is unique
     if (existingUser) {
       return res.status(400).json({ error: "Username already exists!" });
+    }
+
+    if (username.length < 3 || password.length < 3) {
+      return res
+        .status(400)
+        .json({
+          error: "Username and password must be at least 3 characters long.",
+        });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);

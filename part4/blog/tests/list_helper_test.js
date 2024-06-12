@@ -238,3 +238,26 @@ describe("Testing the backend", () => {
     await mongoose.connection.close();
   });
 });
+
+describe("Token Authentication", () => {
+  test("4.16*: Verify invalid users with usernames or passwords shorter than 3 characters are not created and 400 status code and error message is returned", async () => {
+    const invalidUsername = {
+      username: "ha",
+      password: "hahaha",
+    };
+    const invalidPassword = {
+      username: "hahaha",
+      password: "ha",
+    };
+
+    const resultUsername = await api
+      .post("/api/users/register")
+      .send(invalidUsername);
+    const resultPassword = await api
+      .post("/api/users/register")
+      .send(invalidPassword);
+
+    assert.strictEqual(resultUsername.statusCode, 400);
+    assert.strictEqual(resultPassword.statusCode, 400);
+  });
+});
