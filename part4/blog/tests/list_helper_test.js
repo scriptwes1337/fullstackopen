@@ -119,6 +119,7 @@ describe("Testing the backend", () => {
     const testBlog = {
       author: "Test",
       url: "Test",
+      title: "Test",
     };
 
     await api.post("/api/blogs").send(testBlog).expect(201);
@@ -155,6 +156,7 @@ describe("Testing the backend", () => {
     const testBlog2 = {
       author: "Test2",
       url: "Test2",
+      title: "Test2"
     };
 
     await api.post("/api/blogs").send(testBlog2).expect(201);
@@ -175,7 +177,18 @@ describe("Testing the backend", () => {
       .expect("Content-Type", /application\/json/)
       .expect(200);
 
-    assert.strictEqual(result.body[0].likes, 0)
+    assert.strictEqual(result.body[0].likes, 0);
+  });
+
+  test("4.12*: Verifies that if title or url properties are missing in the POST request, backend responds to the request with status code 400 Bad Request", async () => {
+    const invalidBlog = {
+      noTitle:
+        "This is not a title and the backend should reject this with a 404 status code!",
+    };
+
+    const result = await api.post("/api/blogs").send(invalidBlog).expect(400);
+
+    assert.strictEqual(result.statusCode, 400);
   });
 
   after(async () => {

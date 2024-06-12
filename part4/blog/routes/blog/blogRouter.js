@@ -34,6 +34,10 @@ router.post("/api/blogs", async (req, res, next) => {
       req.body.likes = 0;
     }
 
+    if (!req.body.title || !req.body.url) {
+      return res.status(400).json({ error: "Title or URL missing." });
+    }
+
     const blog = new Blog(req.body);
     const data = await blog.save();
     res.status(201).json(data);
