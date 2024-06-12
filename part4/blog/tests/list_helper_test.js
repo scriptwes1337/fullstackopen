@@ -148,25 +148,34 @@ describe("Testing the backend", () => {
     const initialBlogs = await api
       .get("/api/blogs")
       .expect("Content-Type", /application\/json/)
-      .expect(200)
+      .expect(200);
 
-    const initialBlogsCount = initialBlogs.body.length
+    const initialBlogsCount = initialBlogs.body.length;
 
     const testBlog2 = {
       author: "Test2",
       url: "Test2",
     };
 
-    await api.post("/api/blogs").send(testBlog2).expect(201)
+    await api.post("/api/blogs").send(testBlog2).expect(201);
 
     const refreshedBlogs = await api
       .get("/api/blogs")
       .expect("Content-Type", /application\/json/)
       .expect(200);
-      
-    const refreshedBlogsCount = refreshedBlogs.body.length
 
-    assert.strictEqual(refreshedBlogsCount, initialBlogsCount + 1)
+    const refreshedBlogsCount = refreshedBlogs.body.length;
+
+    assert.strictEqual(refreshedBlogsCount, initialBlogsCount + 1);
+  });
+
+  test("4.11*: Verifies that if the likes property is missing from the POST request, it defaults to 0", async () => {
+    const result = await api
+      .get("/api/blogs")
+      .expect("Content-Type", /application\/json/)
+      .expect(200);
+
+    assert.strictEqual(result.body[0].likes, 0)
   });
 
   after(async () => {

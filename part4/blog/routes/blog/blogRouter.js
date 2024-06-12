@@ -30,6 +30,10 @@ router.get("/api/blogs", async (req, res, next) => {
 
 router.post("/api/blogs", async (req, res, next) => {
   try {
+    if (!req.body.likes) {
+      req.body.likes = 0;
+    }
+
     const blog = new Blog(req.body);
     const data = await blog.save();
     res.status(201).json(data);
