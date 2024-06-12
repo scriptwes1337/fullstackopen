@@ -56,4 +56,15 @@ router.delete("/api/blogs/:id", async (req, res, next) => {
   }
 });
 
+router.put("/api/blogs/:id", async (req, res, next) => {
+  try {
+    const requestedId = req.params["id"];
+    const updatedBlog = req.body;
+    const data = await Blog.findByIdAndUpdate(requestedId, updatedBlog);
+    res.status(200).json(data);
+  } catch (err) {
+    next(err);
+  }
+});
+
 module.exports = router;

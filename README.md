@@ -86,7 +86,7 @@ Asterisk denotes an optional exercise
 - [x] 4.11*
 - [x] 4.12*
 - [x] 4.13
-- [ ] 4.14
+- [x] 4.14
 - [ ] 4.15
 - [ ] 4.16*
 - [ ] 4.17
