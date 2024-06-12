@@ -15,12 +15,12 @@ router.get("/", async (req, res, next) => {
 
 router.post("/", async (req, res, next) => {
   try {
-    const decodedToken = jwt.verify(req.token, process.env.SECRET);
+    const user = req.user;
 
-    if (!decodedToken.id) {
-      return res.status(401).json({ error: "Token invalid!" });
+    if (!user.id) {
+      res.status(401).json({ error: "Invalid token!" });
     }
-
+    
     if (!req.body.likes) {
       req.body.likes = 0;
     }
@@ -29,20 +29,20 @@ router.post("/", async (req, res, next) => {
       return res.status(400).json({ error: "Title or URL missing." });
     }
 
-    const { title, author, url, likes, user } = req.body;
+    const { title, author, url, likes } = req.body;
 
     const blog = new Blog({
       title,
       author,
       url,
       likes,
-      user,
+      user: user.id,
     });
 
     const savedBlog = await blog.save();
-    const updatedUser = await User.findById(user);
+    const updatedUser = await User.findById(user.id);
     updatedUser.blogs.push(savedBlog._id);
-    const savedUpdatedUser = await User.findByIdAndUpdate(user, updatedUser);
+    const savedUpdatedUser = await User.findByIdAndUpdate(user.id, updatedUser);
 
     res.status(201).json([savedBlog, savedUpdatedUser]);
   } catch (err) {
@@ -52,20 +52,22 @@ router.post("/", async (req, res, next) => {
 
 router.delete("/:id", async (req, res, next) => {
   try {
-    const decodedToken = jwt.verify(req.token, process.env.SECRET);
+    const user = req.user;
 
-    if (!decodedToken.id) {
-      return res.status(401).json({ error: "Token invalid!" });
+    if (!user.id) {
+      res.status(401).json({ error: "Invalid user!" });
     }
 
     const requestedId = req.params["id"];
     const findBlog = await Blog.findById(requestedId);
 
-    if (decodedToken.id === String(findBlog.user)) {
+    if (user.id === String(findBlog.user)) {
       const data = await Blog.findByIdAndDelete(requestedId);
       res.status(200).json(data);
     } else {
-      res.status(400).json({error: "You can only delete blogs that you created!"})
+      res
+        .status(400)
+        .json({ error: "You can only delete blogs that you created!" });
     }
   } catch (err) {
     next(err);

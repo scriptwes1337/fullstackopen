@@ -6,6 +6,7 @@ const logger = require("morgan");
 require("dotenv").config();
 const mongoose = require("mongoose");
 const tokenExtractor = require("./middleware/tokenExtractor");
+const userExtractor = require("./middleware/userExtractor");
 
 // Import routes
 const blogsRouter = require("./routes/blog/blogsRouter");
@@ -25,8 +26,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-// Token Extractor middleware
+// Custom middleware
 app.use(tokenExtractor);
+app.use(userExtractor);
 
 // Use routes
 app.use("/api/blogs", blogsRouter);
