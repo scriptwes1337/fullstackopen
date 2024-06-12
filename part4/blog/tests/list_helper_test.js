@@ -1,4 +1,4 @@
-const { test, describe } = require("node:test");
+const { test, describe, after, beforeEach } = require("node:test");
 const assert = require("node:assert");
 const listHelper = require("../utils/list_helper");
 const supertest = require("supertest");
@@ -111,19 +111,40 @@ describe("Exercise 4.7*", () => {
   });
 });
 
-describe("Exercise 4.8", () => {
-  test("Verify that application returns correct amount of blog posts in JSON format", async () => {
+// TESTING THE BACKEND SECTION
+describe("Testing the backend", () => {
+  beforeEach(async () => {
     await Blog.deleteMany();
 
     const testBlog = {
-      author: "Exercise 4.8",
+      author: "Test",
       url: "Test",
     };
 
-    await api
-      .post("/api/blogs")
-      .send(testBlog)
-      .expect(201)
-      .expect("Content-Type", /application\/json/);
+    await api.post("/api/blogs").send(testBlog).expect(201);
+  });
+
+  test("4.8: Verify that application returns correct amount of blog posts in JSON format", async () => {
+    const result = await api
+      .get("/api/blogs")
+      .expect("Content-Type", /application\/json/)
+      .expect(200);
+
+    assert.strictEqual(result.body.length, 1);
+  });
+
+  test("4.9: Verify that the unique identifier property of the blog posts is named id, by default the database names the property _id", async () => {
+    const findTestBlog = await Blog.findOne({ author: "Test" });
+
+    const result = await api
+      .get("/api/blogs")
+      .expect("Content-Type", /application\/json/)
+      .expect(200);
+
+    assert.strictEqual(result.body[0].id, findTestBlog.id);
+  });
+
+  after(async () => {
+    await mongoose.connection.close();
   });
 });
