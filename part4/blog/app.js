@@ -4,9 +4,11 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 require("dotenv").config();
+const mongoose = require("mongoose");
 
 // Import routes
-const blogsRouter = require("./routes/blog/blogRouter");
+const blogsRouter = require("./routes/blog/blogsRouter");
+const usersRouter = require("./routes/users/usersRouter");
 
 // Use express
 const app = express();
@@ -23,7 +25,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 // Use routes
-app.use("/", blogsRouter);
+app.use("/api/blogs", blogsRouter);
+app.use("/api/users", usersRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -40,5 +43,21 @@ app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   res.render("error");
 });
+
+const MONGO_URI =
+  process.env.NODE_ENV === "test"
+    ? process.env.TEST_MONGO_URI
+    : process.env.MONGO_URI;
+
+const connectMongo = async () => {
+  try {
+    await mongoose.connect(MONGO_URI);
+    await console.log("Connected to MongoDB!");
+  } catch (err) {
+    console.error("Failed to connect to MongoDB: ", err);
+  }
+};
+
+connectMongo();
 
 module.exports = app;
