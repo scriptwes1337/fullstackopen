@@ -144,6 +144,31 @@ describe("Testing the backend", () => {
     assert.strictEqual(result.body[0].id, findTestBlog.id);
   });
 
+  test("4.10: Verifies that making HTTP POST request to /api/blogs creates a new blog post", async () => {
+    const initialBlogs = await api
+      .get("/api/blogs")
+      .expect("Content-Type", /application\/json/)
+      .expect(200)
+
+    const initialBlogsCount = initialBlogs.body.length
+
+    const testBlog2 = {
+      author: "Test2",
+      url: "Test2",
+    };
+
+    await api.post("/api/blogs").send(testBlog2).expect(201)
+
+    const refreshedBlogs = await api
+      .get("/api/blogs")
+      .expect("Content-Type", /application\/json/)
+      .expect(200);
+      
+    const refreshedBlogsCount = refreshedBlogs.body.length
+
+    assert.strictEqual(refreshedBlogsCount, initialBlogsCount + 1)
+  });
+
   after(async () => {
     await mongoose.connection.close();
   });
