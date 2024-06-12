@@ -2,10 +2,19 @@ const express = require("express");
 const router = express.Router();
 const Blog = require("../../models/Blog");
 const User = require("../../models/User");
+const jwt = require("jsonwebtoken");
+
+const getTokenFrom = (req) => {
+  const authorization = req.get("authorization");
+  if (authorization && authorization.startsWith("Bearer ")) {
+    return authorization.replace("Bearer ", "");
+  }
+  return null;
+};
 
 router.get("/", async (req, res, next) => {
   try {
-    const data = await Blog.find().populate("user", {blogs: 0});
+    const data = await Blog.find().populate("user", { blogs: 0 });
     res.status(200).json(data);
   } catch (err) {
     next(err);
@@ -14,6 +23,12 @@ router.get("/", async (req, res, next) => {
 
 router.post("/", async (req, res, next) => {
   try {
+    const decodedToken = jwt.verify(getTokenFrom(req), process.env.SECRET);
+
+    if (!decodedToken.id) {
+      return res.status(401).json({ error: "Token invalid!" });
+    }
+
     if (!req.body.likes) {
       req.body.likes = 0;
     }
