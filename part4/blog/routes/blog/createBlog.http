@@ -1,0 +1,11 @@
+# Modify id to your specific user id
+POST http://localhost:3001/api/blogs
+content-type: application/json
+
+{
+  "title": "test",
+  "author": "test",
+  "url": "test",
+  "likes": 0,
+  "user": "6669b23b2f1c139c96efcf4f"
+}

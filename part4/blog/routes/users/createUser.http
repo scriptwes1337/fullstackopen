@@ -4,5 +4,6 @@ content-type: application/json
 {
   "username": "test",
   "name": "test",
-  "password": "test"
+  "password": "test",
+  "blogs": []
 }

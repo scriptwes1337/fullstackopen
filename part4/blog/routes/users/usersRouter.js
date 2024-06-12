@@ -1,11 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const User = require("../../models/User");
+const Blog = require("../../models/Blog");
 const bcrypt = require("bcrypt");
 
 router.get("/all", async (req, res) => {
   try {
-    const allUsers = await User.find();
+    const allUsers = await User.find().populate("blogs", { likes: 0, user: 0 });
 
     res.status(200).json(allUsers);
   } catch (err) {
@@ -24,11 +25,9 @@ router.post("/register", async (req, res) => {
     }
 
     if (username.length < 3 || password.length < 3) {
-      return res
-        .status(400)
-        .json({
-          error: "Username and password must be at least 3 characters long.",
-        });
+      return res.status(400).json({
+        error: "Username and password must be at least 3 characters long.",
+      });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -36,6 +35,7 @@ router.post("/register", async (req, res) => {
       username,
       name,
       password: hashedPassword,
+      blogs: [],
     });
 
     const savedUser = await user.save();
