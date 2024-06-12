@@ -1,6 +1,11 @@
 const { test, describe } = require("node:test");
 const assert = require("node:assert");
 const listHelper = require("../utils/list_helper");
+const supertest = require("supertest");
+const app = require("../app");
+const Blog = require("../models/Blog");
+const api = supertest(app);
+const mongoose = require("mongoose");
 
 const exampleBlogs = [
   {
@@ -103,5 +108,22 @@ describe("Exercise 4.7*", () => {
     const result = listHelper.mostLikes(exampleBlogs);
 
     assert.deepStrictEqual(result, expected);
+  });
+});
+
+describe("Exercise 4.8", () => {
+  test("Verify that application returns correct amount of blog posts in JSON format", async () => {
+    await Blog.deleteMany();
+
+    const testBlog = {
+      author: "Exercise 4.8",
+      url: "Test",
+    };
+
+    await api
+      .post("/api/blogs")
+      .send(testBlog)
+      .expect(201)
+      .expect("Content-Type", /application\/json/);
   });
 });

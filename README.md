@@ -80,7 +80,7 @@ Asterisk denotes an optional exercise
 - [x] 4.5*
 - [x] 4.6*
 - [x] 4.7*
-- [ ] 4.8
+- [x] 4.8
 - [ ] 4.9
 - [ ] 4.10
 - [ ] 4.11*
