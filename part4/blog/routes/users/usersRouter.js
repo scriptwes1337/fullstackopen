@@ -3,6 +3,7 @@ const router = express.Router();
 const User = require("../../models/User");
 const Blog = require("../../models/Blog");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 router.get("/all", async (req, res) => {
   try {
@@ -40,6 +41,35 @@ router.post("/register", async (req, res) => {
 
     const savedUser = await user.save();
     res.status(201).json(savedUser);
+  } catch (err) {
+    res.status(400).json({ error: err });
+  }
+});
+
+router.post("/login", async (req, res) => {
+  try {
+    const { username, password } = req.body;
+
+    const user = await User.findOne({ username });
+    const passwordCorrect =
+      user === null ? false : await bcrypt.compare(password, user.password);
+
+    if (!(user && passwordCorrect)) {
+      return res.status(401).json({ error: "Invalid username or password." });
+    }
+
+    const userForToken = {
+      username: user.username,
+      id: user.id,
+    };
+
+    const token = jwt.sign(userForToken, process.env.SECRET);
+
+    res.status(200).send({
+      token,
+      username: user.username,
+      name: user.name,
+    });
   } catch (err) {
     res.status(400).json({ error: err });
   }
