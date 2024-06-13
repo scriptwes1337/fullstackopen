@@ -100,8 +100,8 @@ Asterisk denotes an optional exercise
 ### Part 5
 - [x] 5.1
 - [x] 5.2
-- [ ] 5.3
-- [ ] 5.4
+- [x] 5.3
+- [x] 5.4
 - [ ] 5.5
 - [ ] 5.6
 - [ ] 5.7
