@@ -1,0 +1,4 @@
+# Modify authorization token and blog id to your specific case
+DELETE http://localhost:3001/api/blogs/6669c8c1e690c1516275dd6d
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3QiLCJpZCI6IjY2NjljODg5ZTY5MGMxNTE2Mjc1ZGQ2OCIsImlhdCI6MTcxODIwODY2Mn0.IV8Q-0Th7X8Fa5eNV8dJnk7Uw3XtITL9lluJRAhKIjs
