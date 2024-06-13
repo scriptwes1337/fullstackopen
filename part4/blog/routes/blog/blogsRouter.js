@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const Blog = require("../../models/Blog");
 const User = require("../../models/User");
-const jwt = require("jsonwebtoken");
 
 router.get("/", async (req, res, next) => {
   try {
@@ -20,7 +19,7 @@ router.post("/", async (req, res, next) => {
     if (!user.id) {
       res.status(401).json({ error: "Invalid token!" });
     }
-    
+
     if (!req.body.likes) {
       req.body.likes = 0;
     }

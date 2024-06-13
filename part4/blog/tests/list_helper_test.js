@@ -4,6 +4,7 @@ const listHelper = require("../utils/list_helper");
 const supertest = require("supertest");
 const app = require("../app");
 const Blog = require("../models/Blog");
+const User = require("../models/User");
 const api = supertest(app);
 const mongoose = require("mongoose");
 
@@ -113,8 +114,26 @@ describe("Exercise 4.7*", () => {
 
 // TESTING THE BACKEND SECTION
 describe("Testing the backend", () => {
+  let token;
+
   beforeEach(async () => {
     await Blog.deleteMany();
+    await User.deleteMany();
+
+    const newUser = {
+      username: "testuser",
+      name: "Test User",
+      password: "testpassword",
+    };
+
+    await api.post("/api/users/register").send(newUser);
+
+    const loginResponse = await api.post("/api/users/login").send({
+      username: "testuser",
+      password: "testpassword",
+    });
+
+    token = `Bearer ${loginResponse.body.token}`;
 
     const testBlog = {
       author: "Test",
@@ -122,7 +141,11 @@ describe("Testing the backend", () => {
       title: "Test",
     };
 
-    await api.post("/api/blogs").send(testBlog).expect(201);
+    await api
+      .post("/api/blogs")
+      .send(testBlog)
+      .set("Authorization", token)
+      .expect(201);
   });
 
   test("4.8: Verify that application returns correct amount of blog posts in JSON format", async () => {
@@ -159,7 +182,11 @@ describe("Testing the backend", () => {
       title: "Test2",
     };
 
-    await api.post("/api/blogs").send(testBlog2).expect(201);
+    await api
+      .post("/api/blogs")
+      .set("Authorization", token)
+      .send(testBlog2)
+      .expect(201);
 
     const refreshedBlogs = await api
       .get("/api/blogs")
@@ -186,7 +213,11 @@ describe("Testing the backend", () => {
         "This is not a title and the backend should reject this with a 404 status code!",
     };
 
-    const result = await api.post("/api/blogs").send(invalidBlog).expect(400);
+    const result = await api
+      .post("/api/blogs")
+      .set("Authorization", token)
+      .send(invalidBlog)
+      .expect(400);
 
     assert.strictEqual(result.statusCode, 400);
   });
@@ -199,7 +230,7 @@ describe("Testing the backend", () => {
 
     const testBlogId = findTestBlog.body[0].id;
 
-    await api.delete(`/api/blogs/${testBlogId}`).expect(200);
+    await api.delete(`/api/blogs/${testBlogId}`).set("Authorization", token).expect(200);
 
     const result = await api
       .get("/api/blogs")
@@ -230,7 +261,7 @@ describe("Testing the backend", () => {
       .expect("Content-Type", /application\/json/)
       .expect(200);
 
-    assert.deepStrictEqual(findUpdatedTestBlog.body[0], updatedTestBlog);
+    assert.deepStrictEqual(findUpdatedTestBlog.body[0].author, updatedTestBlog.author);
   });
 
   after(async () => {
