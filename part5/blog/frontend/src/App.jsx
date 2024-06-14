@@ -1,222 +1,139 @@
 import { useState, useEffect } from "react";
 import Blog from "./components/Blog";
 import blogService from "./services/blogs";
-import userService from "./services/users";
 import { LoginForm } from "./components/LoginForm";
-import { CreateBlog } from "./components/CreateBlog";
+import loginService from "./services/login";
+import { CreateBlogForm } from "./components/CreateBlogForm";
 import axios from "axios";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
-  const [isAuth, setIsAuth] = useState(false);
-  const [usernameInput, setUsernameInput] = useState("");
-  const [passwordInput, setPasswordInput] = useState("");
-  const [user, setUser] = useState({});
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
-  const [successMsg, setSuccessMsg] = useState("");
-  const [errorMsg, setErrorMsg] = useState("");
-  const [showNewBlogForm, setShowNewBlogForm] = useState(false);
-
-  const notifySuccess = (message) => {
-    setSuccessMsg(message);
-    setTimeout(() => {
-      setSuccessMsg("");
-    }, 5000);
-  };
-
-  const notifyError = (message) => {
-    setErrorMsg(message);
-    setTimeout(() => {
-      setErrorMsg("");
-    }, 5000);
-  };
+  const [refreshEffect, setRefreshEffect] = useState(1);
+  const [notification, setNotification] = useState("");
+  const [showCreateBlog, setShowCreateBlog] = useState(false);
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => {
-      setBlogs(blogs.sort((a, b) => b.likes - a.likes));
-    });
+    const token = localStorage.getItem("token");
 
-    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-
-    if (currentUser) {
-      setIsAuth(true);
-      setUser(currentUser);
+    if (token) {
+      setIsLoggedIn(true);
+      blogService.getAll().then((blogs) => {
+        // Sort the blogs by likes in descending order
+        const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes);
+        setBlogs(sortedBlogs);
+      });
     }
-  }, []);
-
-  const handleUsername = (e) => {
-    setUsernameInput(e.target.value);
-  };
-
-  const handlePassword = (e) => {
-    setPasswordInput(e.target.value);
-  };
+  }, [isLoggedIn, refreshEffect]);
 
   const handleLogin = async () => {
     try {
-      const response = await userService.login(usernameInput, passwordInput);
-
-      const { name, username, token } = response.data;
-
-      if (!token) {
-        return notifyError("Incorrect username or password");
-      }
-
-      const newUser = {
-        name,
-        username,
-        token,
-      };
-      setUser(newUser);
-      localStorage.setItem("currentUser", JSON.stringify(newUser));
-      setIsAuth(true);
-      notifySuccess("Logged in successfully!");
-    } catch (err) {
-      if (err.response.status === 401) {
-        notifyError("Incorrect username or password");
-      } else {
-        notifyError(`An error occurred during login: ${err.message}`);
-      }
+      const user = await loginService.login(username, password);
+      setIsLoggedIn(true);
+      setUsername("");
+      setPassword("");
+      localStorage.setItem("token", user.token);
+      setNotification("SUCCESS login");
+    } catch (error) {
+      console.error("Login failed", error);
+      setNotification("FAILED login");
     }
   };
 
-  const handleLogout = (e) => {
-    localStorage.clear();
-    setIsAuth(false);
-    notifySuccess("Logged out successfully.");
-  };
-
-  const handleTitle = (e) => {
-    setTitle(e.target.value);
-  };
-
-  const handleAuthor = (e) => {
-    setAuthor(e.target.value);
-  };
-
-  const handleUrl = (e) => {
-    setUrl(e.target.value);
+  const handleLogout = async () => {
+    try {
+      localStorage.removeItem("token");
+      setIsLoggedIn(false);
+      setNotification("SUCCESS logout");
+    } catch (error) {
+      console.error("FAILED logout", error);
+      setNotification("FAILED logout");
+    }
   };
 
   const handleCreateBlog = async () => {
-    const newBlog = {
-      title,
-      author,
-      url,
-    };
-
     try {
-      const response = await blogService.createBlog(newBlog, user.token);
-      setBlogs([...blogs, response.data[0]]);
-      notifySuccess(
-        `a new blog ${response.data[0].title} by ${response.data[0].author} added`
-      );
-      setShowNewBlogForm(false);
-    } catch (err) {
-      notifyError(`Error creating blog: ${err.message}`);
-    }
-  };
-
-  const handleshowNewBlogForm = () => {
-    setShowNewBlogForm(!showNewBlogForm);
-  };
-
-  const handleDeleteBlog = async (id) => {
-    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-    try {
-      await axios.delete(`/api/blogs/${id}`, {
-        headers: {
-          Authorization: `Bearer ${currentUser.token}`,
-        },
-      });
-      setBlogs(blogs.filter((blog) => blog.id !== id));
-      notifySuccess("Blog deleted successfully.");
-    } catch (err) {
-      console.log("Delete unsuccessful", err.message);
-      notifyError("Error deleting blog: " + err.message);
-    }
-  };
-
-  const handleLike = async (id) => {
-    try {
-      const blogToUpdate = blogs.find((blog) => blog.id === id);
-      const updatedBlog = { ...blogToUpdate, likes: blogToUpdate.likes + 1 };
-      await axios.put(`/api/blogs/${id}`, updatedBlog);
-      setBlogs(blogs.map((blog) => (blog.id === id ? updatedBlog : blog)));
+      await blogService.createBlog(title, author, url);
+      setTitle("");
+      setAuthor("");
+      setUrl("");
+      setRefreshEffect((prevState) => prevState + 1);
+      setNotification("SUCCESS create new blog");
+      setShowCreateBlog(false);
     } catch (error) {
-      console.error("Like unsuccessful", error.message);
+      console.error("FAILED create new blog", error);
+      setNotification("FAILED create new blog");
     }
+  };
+
+  const handleShowCreateBlog = () => {
+    setShowCreateBlog(true);
+  };
+
+  const handleDelete = async (blog) => {
+    if (window.confirm(`Remove blog ${blog.title}?`)) {
+      try {
+        await axios.delete(`/api/blogs/${blog._id}`);
+        setNotification("SUCCESS delete blog");
+        setRefreshEffect((prevState) => prevState + 1);
+      } catch (error) {
+        console.error("FAILED delete blog", error);
+        setNotification("FAILED delete blog");
+      }
+    }
+  };
+
+  const handleLike = async (blog) => {
+    blog.likes += 1;
+    setRefreshEffect((prevState) => prevState + 1);
+
+    const response = await axios.put(`/api/blogs/${blog._id}`, blog);
+
+    return response.data;
   };
 
   return (
     <div>
-      {" "}
-      {successMsg === "" ? null : (
-        <p
-          style={{
-            color: "green",
-            fontSize: "1.5rem",
-            backgroundColor: "lightgrey",
-            padding: "0.8rem",
-            border: "2px green solid",
-            borderRadius: "10px",
-          }}
-        >
-          {successMsg}
-        </p>
-      )}
-      {errorMsg === "" ? null : (
-        <p
-          style={{
-            color: "green",
-            fontSize: "1.5rem",
-            backgroundColor: "lightgrey",
-            padding: "0.8rem",
-            border: "2px green solid",
-            borderRadius: "10px",
-          }}
-        >
-          {errorMsg}
-        </p>
-      )}
-      {isAuth ? (
-        <>
+      <p data-testid="notificationMessage">{notification}</p>
+      {isLoggedIn ? (
+        <div>
           <h2>blogs</h2>
-          <p>
-            {user.name} is logged in
-            <button onClick={handleLogout}>logout</button>
-          </p>
-          {showNewBlogForm ? (
-            <CreateBlog
-              handleTitle={handleTitle}
-              handleAuthor={handleAuthor}
-              handleUrl={handleUrl}
-              handleCreateBlog={handleCreateBlog}
-            >
-              <button onClick={handleshowNewBlogForm}>cancel</button>
-            </CreateBlog>
+          {showCreateBlog ? (
+            <CreateBlogForm
+              onCreateBlog={handleCreateBlog}
+              title={title}
+              author={author}
+              url={url}
+              setTitle={setTitle}
+              setAuthor={setAuthor}
+              setUrl={setUrl}
+            />
           ) : (
-            <button onClick={handleshowNewBlogForm}>new blog</button>
+            <button onClick={handleShowCreateBlog}>New Blog</button>
           )}
-          {blogs.map((blog) =>
-            blog ? (
-              <Blog
-                key={blog.id}
-                blog={blog}
-                deleteBlog={handleDeleteBlog}
-                user={user}
-                handleLike={handleLike}
-              />
-            ) : null
-          )}
-        </>
+
+          {blogs.map((blog) => (
+            <Blog
+              key={blog._id}
+              blog={blog}
+              onDelete={() => handleDelete(blog)}
+              onLike={() => handleLike(blog)}
+            />
+          ))}
+          <button onClick={handleLogout}>Log Out</button>
+        </div>
       ) : (
         <LoginForm
-          handleUsername={handleUsername}
-          handlePassword={handlePassword}
-          handleLogin={handleLogin}
+          onLogin={handleLogin}
+          username={username}
+          password={password}
+          setUsername={setUsername}
+          setPassword={setPassword}
         />
       )}
     </div>

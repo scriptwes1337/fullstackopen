@@ -6,14 +6,15 @@ const getAll = () => {
   return request.then((response) => response.data);
 };
 
-const createBlog = async (blog, token) => {
-  const request = await axios.post(baseUrl, blog, {
-    headers: {
-      "Authorization": `Bearer ${token}`,
-    },
-  });
+const createBlog = async (title, author, url) => {
+  const newBlog = {
+    title: title,
+    author: author,
+    url: url,
+  };
 
-  return request;
+  const response = await axios.post(baseUrl, newBlog);
+  return response.data;
 };
 
 export default { getAll, createBlog };

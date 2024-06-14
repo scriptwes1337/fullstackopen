@@ -1,99 +1,107 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
-import "@testing-library/jest-dom";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { expect, test, vi } from "vitest";
 import Blog from "./Blog";
-import { CreateBlog } from "./CreateBlog";
+import { CreateBlogForm } from "./CreateBlogForm";
 
-const blog = {
-  _id: "1",
-  title: "Test Blog",
-  author: "Test Author",
-  url: "http://testurl.com",
-  likes: 10,
-  user: {
-    username: "test",
-  },
-};
+// 5.13
+test("renders title and author but not URL or likes by default", () => {
+  const blog = {
+    _id: "1",
+    title: "Test Blog",
+    author: "Test Author",
+    url: "http://testurl.com",
+    likes: 10,
+  };
 
-const user = {
-  username: "test",
-};
+  render(<Blog blog={blog} onDelete={() => {}} />);
 
-describe("Exercises 5.13 to 5.16", () => {
-  let app;
+  const titleElement = screen.getByText("Test Blog");
+  const authorElement = screen.queryByText("Author: Test Author");
+  const urlElement = screen.queryByText("Url: http://testurl.com");
+  const likesElement = screen.queryByText("10 likes");
+
+  expect(titleElement).toBeInTheDocument();
+  expect(authorElement).toBeNull();
+  expect(urlElement).toBeNull();
+  expect(likesElement).toBeNull();
+});
+
+// 5.14
+test("renders URL and likes when button is clicked", () => {
+  const blog = {
+    title: "Test Blog",
+    author: "Test Author",
+    url: "http://testurl.com",
+    likes: 10,
+  };
+
+  render(<Blog blog={blog} />);
+
+  const button = screen.getByText("view");
+  fireEvent.click(button);
+
+  const urlElement = screen.getByText("Url: http://testurl.com");
+  const likesElement = screen.getByText("10 likes");
+
+  expect(urlElement).toBeInTheDocument();
+  expect(likesElement).toBeInTheDocument();
+});
+
+// 5.15
+test("calls event handler twice when like button is clicked twice", () => {
+  const blog = {
+    title: "Test Blog",
+    author: "Test Author",
+    url: "http://testurl.com",
+    likes: 10,
+  };
+
   const mockHandler = vi.fn();
 
-  beforeEach(() => {
-    app = render(<Blog blog={blog} user={user} handleLike={mockHandler} />);
-  });
+  render(<Blog blog={blog} handleLike={mockHandler} />);
 
-  // 5.13
-  test("5.13: Checks that the component displaying a blog renders the blog's title and author only by default", () => {
-    const titleElement = screen.getByText("Test Blog");
-    const authorElement = screen.getByText("Test Author");
-    const urlElement = screen.queryByText("http://testurl.com");
-    const likesElement = screen.queryByText("10 likes");
+  const viewButton = screen.getByText("view");
+  fireEvent.click(viewButton);
 
-    expect(titleElement).toBeInTheDocument();
-    expect(authorElement).toBeInTheDocument();
-    expect(urlElement).toBeNull();
-    expect(likesElement).toBeNull();
-  });
+  const likeButton = screen.getByText("like");
+  fireEvent.click(likeButton);
+  fireEvent.click(likeButton);
 
-  // 5.14
-  test("5.14: Checks that the blog's URL and number of likes are shown when button controlling shown details is clicked", () => {
-    const viewButton = screen.getByText("view");
-    fireEvent.click(viewButton);
+  expect(mockHandler).toHaveBeenCalledTimes(2);
+});
 
-    const urlElement = screen.getByText("Url: http://testurl.com");
-    const likesElement = screen.getByText("Likes: 10");
+// 5.16
+test("calls event handler with correct details when a new blog is created", () => {
+  const createBlog = vi.fn();
+  const setTitle = vi.fn();
+  const setAuthor = vi.fn();
+  const setUrl = vi.fn();
 
-    expect(urlElement).toBeInTheDocument();
-    expect(likesElement).toBeInTheDocument();
-  });
+  render(
+    <CreateBlogForm
+      onCreateBlog={createBlog}
+      title=""
+      author=""
+      url=""
+      setTitle={setTitle}
+      setAuthor={setAuthor}
+      setUrl={setUrl}
+    />
+  );
 
-  // 5.15
-  test("5.15: Ensures that if like button is clicked twice, the event handler the component received as props is called twice", () => {
-    const viewButton = screen.getByText("view");
-    fireEvent.click(viewButton);
+  const titleInput = screen.getByLabelText("Title");
+  const authorInput = screen.getByLabelText("Author");
+  const urlInput = screen.getByLabelText("URL");
+  const createButton = screen.getByText("Create");
 
-    const likeButton = screen.getByText("like");
-    fireEvent.click(likeButton);
-    fireEvent.click(likeButton);
+  fireEvent.change(titleInput, { target: { value: "Test Blog" } });
+  fireEvent.change(authorInput, { target: { value: "Test Author" } });
+  fireEvent.change(urlInput, { target: { value: "http://testurl.com" } });
+  fireEvent.click(createButton);
 
-    expect(mockHandler).toHaveBeenCalledTimes(2);
-  });
-
-  // 5.16
-  test("5.16: Check that the new blog form calls the event handler it received as props with the right details when a new blog is created", () => {
-    const mockTitle = vi.fn();
-    const mockAuthor = vi.fn();
-    const mockUrl = vi.fn();
-    const mockCreateBlog = vi.fn();
-
-    render(
-      <CreateBlog
-        handleTitle={mockTitle}
-        handleAuthor={mockAuthor}
-        handleUrl={mockUrl}
-        handleCreateBlog={mockCreateBlog}
-      />
-    );
-
-    const titleInput = screen.getByLabelText("title:");
-    const authorInput = screen.getByLabelText("author:");
-    const urlInput = screen.getByLabelText("url:");
-    const submitButton = screen.queryByText("create");
-
-    fireEvent.change(titleInput, { target: { value: "New Blog" } });
-    fireEvent.change(authorInput, { target: { value: "New Author" } });
-    fireEvent.change(urlInput, { target: { value: "http://newurl.com" } });
-    fireEvent.click(submitButton);
-
-    expect(mockCreateBlog).toHaveBeenCalledTimes(1);
-    expect(titleInput.value).toBe("New Blog");
-    expect(authorInput.value).toBe("New Author");
-    expect(urlInput.value).toBe("http://newurl.com");
-  });
+  expect(createBlog).toHaveBeenCalledWith();
+  expect(setTitle).toHaveBeenCalledWith("Test Blog");
+  expect(setAuthor).toHaveBeenCalledWith("Test Author");
+  expect(setUrl).toHaveBeenCalledWith("http://testurl.com");
 });

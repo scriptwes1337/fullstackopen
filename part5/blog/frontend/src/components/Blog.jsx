@@ -1,75 +1,55 @@
-import axios from "axios";
-import React, { useState } from "react";
 import PropTypes from "prop-types";
+import React, { useState } from "react";
 
-export const Blog = ({ blog, deleteBlog, user, handleLike }) => {
-  const [blogData, setBlogData] = useState(blog);
-  const [viewBlog, setViewBlog] = useState(false);
-  const [buttonLabel, setButtonLabel] = useState("view");
+const Blog = ({ blog, onDelete, onLike }) => {
+  const [detailsVisible, setDetailsVisible] = useState(false);
 
-  const handleView = () => {
-    setViewBlog(!viewBlog);
-    if (viewBlog) {
-      setButtonLabel("show");
-    } else if (!viewBlog) {
-      setButtonLabel("hide");
-    }
+  const blogStyle = {
+    paddingTop: 10,
+    paddingLeft: 2,
+    border: "solid",
+    borderWidth: 1,
+    marginBottom: 5,
   };
 
-  const handleLikeClick = async () => {
-    try {
-      await handleLike(blogData.id);
-      setBlogData({ ...blogData, likes: blogData.likes + 1 });
-    } catch (err) {
-      console.log("Like unsuccessful", err.message);
-    }
-  };
-
-  const handleDelete = async () => {
-    try {
-      await deleteBlog(blogData.id);
-    } catch (err) {
-      console.log("Delete unsuccessful", err.message);
-    }
+  const toggleDetails = () => {
+    setDetailsVisible(!detailsVisible);
   };
 
   return (
-    <div>
-      {viewBlog ? (
-        <div style={{ border: "1px solid black" }}>
-          <p>
-            Title: {blogData.title}{" "}
-            <button onClick={handleView}>{buttonLabel}</button>
-          </p>{" "}
-          <p>Url: {blogData.url}</p>
-          <p>
-            Likes: {blogData.likes}
-            <button onClick={handleLikeClick}>like</button>
-          </p>
-          <p>Author: {blogData.author}</p>
-          {blog.user.username === user.username ? (
-            <button onClick={handleDelete}>delete</button>
-          ) : null}
-        </div>
-      ) : (
+    <div style={blogStyle} data-testid="existingBlog">
+      <div>
+        {blog.title}
+        <button onClick={toggleDetails} data-testid="existingBlogViewButton">
+          {detailsVisible ? "hide" : "view"}
+        </button>
+      </div>
+      {detailsVisible ? (
         <div>
-          <span>{blogData.title}</span> <span>{blogData.author}</span>
-          <button onClick={handleView}>{buttonLabel}</button>
+          <p>Author: {blog.author}</p>
+          <p>Url: {blog.url}</p>
+          <p data-testid="existingBlogLikesCount">
+            {blog.likes} likes{" "}
+            <button onClick={onLike} data-testid="existingBlogLikeButton">
+              like
+            </button>
+          </p>
+          <button onClick={onDelete}>Delete</button>
         </div>
-      )}
+      ) : null}
     </div>
   );
 };
 
 Blog.propTypes = {
   blog: PropTypes.shape({
-    id: PropTypes.string.isRequired,
+    _id: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     author: PropTypes.string.isRequired,
     url: PropTypes.string.isRequired,
     likes: PropTypes.number.isRequired,
   }).isRequired,
-  deleteBlog: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
 };
 
 export default Blog;
