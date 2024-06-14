@@ -10,7 +10,7 @@ export const CreateBlog = ({
   return (
     <>
       <h2>create new</h2>
-      <div>
+      <div data-testid="create-blog-form">
         <label htmlFor="createBlogTitleInput">title:</label>
         <input
           type="text"
