@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useState } from "react";
 
-export const Blog = ({ blog }) => {
+export const Blog = ({ blog, deleteBlog, user }) => {
   const [blogData, setBlogData] = useState(blog);
   const [viewBlog, setViewBlog] = useState(false);
   const [buttonLabel, setButtonLabel] = useState("view");
@@ -17,11 +17,19 @@ export const Blog = ({ blog }) => {
 
   const handleLike = async () => {
     try {
-     blogData.likes += 1
+      blogData.likes += 1;
       await axios.put(`/api/blogs/${blogData.id}`, blogData);
-      setBlogData({...blogData});
+      setBlogData({ ...blogData });
     } catch (err) {
       console.log("Like unsuccessful", err.message);
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      await deleteBlog(blogData.id);
+    } catch (err) {
+      console.log("Delete unsuccessful", err.message);
     }
   };
 
@@ -39,6 +47,9 @@ export const Blog = ({ blog }) => {
             <button onClick={handleLike}>like</button>
           </p>
           <p>Author: {blogData.author}</p>
+          {blog.user.username === user.username ? (
+            <button onClick={handleDelete}>delete</button>
+          ) : null}
         </div>
       ) : (
         <div>

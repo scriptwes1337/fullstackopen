@@ -4,6 +4,7 @@ import blogService from "./services/blogs";
 import userService from "./services/users";
 import { LoginForm } from "./components/LoginForm";
 import { CreateBlog } from "./components/CreateBlog";
+import axios from "axios";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -113,6 +114,7 @@ const App = () => {
       notifySuccess(
         `a new blog ${response.data[0].title} by ${response.data[0].author} added`
       );
+      setShowNewBlogForm(false)
     } catch (err) {
       notifyError(`Error creating blog: ${err.message}`);
     }
@@ -121,6 +123,22 @@ const App = () => {
   const handleshowNewBlogForm = () => {
     setShowNewBlogForm(!showNewBlogForm)
   }
+
+  const handleDeleteBlog = async (id) => {
+    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+    try {
+      await axios.delete(`/api/blogs/${id}`, {
+        headers: {
+          Authorization: `Bearer ${currentUser.token}`,
+        },
+      });
+      setBlogs(blogs.filter((blog) => blog.id !== id));
+      notifySuccess("Blog deleted successfully.");
+    } catch (err) {
+      console.log("Delete unsuccessful", err.message);
+      notifyError("Error deleting blog: " + err.message);
+    }
+  };
 
   return (
     <div>
@@ -169,10 +187,14 @@ const App = () => {
             >
               <button onClick={handleshowNewBlogForm}>cancel</button>
             </CreateBlog>
-          ) : <button onClick={handleshowNewBlogForm}>new blog</button>}
-          {blogs.map((blog) => (
-            <Blog key={blog.id} blog={blog} />
-          ))}{" "}
+          ) : (
+            <button onClick={handleshowNewBlogForm}>new blog</button>
+          )}
+          {blogs.map((blog) =>
+            blog ? (
+              <Blog key={blog.id} blog={blog} deleteBlog={handleDeleteBlog} user={user}/>
+            ) : null
+          )}
         </>
       ) : (
         <LoginForm
