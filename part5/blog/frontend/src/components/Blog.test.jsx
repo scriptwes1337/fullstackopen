@@ -11,19 +11,20 @@ const blog = {
   author: "Test Author",
   url: "http://testurl.com",
   likes: 10,
+  user: {
+    username: "test"
+  }
 };
 
 const user = {
-  username: "testuser",
-};
-
-const mockDeleteBlog = vi.fn();
+  username: "test"
+}
 
 describe("Exercises 5.13 to 5.16", () => {
   let app;
 
   beforeEach(() => {
-    app = render(<Blog blog={blog} deleteBlog={mockDeleteBlog} user={user} />);
+    app = render(<Blog blog={blog} user={user}/>);
   });
 
   // 5.13
@@ -40,7 +41,14 @@ describe("Exercises 5.13 to 5.16", () => {
   });
 
   // 5.14
-  // test("5.14: Checks that the blog's URL and number of likes are shown when button controlling shown detailas is clicked", () => {
+  test("5.14: Checks that the blog's URL and number of likes are shown when button controlling shown details is clicked", () => {
+    const viewButton = screen.getByText("view");
+    fireEvent.click(viewButton);
 
-  // });
+    const urlElement = screen.getByText("Url: http://testurl.com");
+    const likesElement = screen.getByText("Likes: 10");
+
+    expect(urlElement).toBeInTheDocument();
+    expect(likesElement).toBeInTheDocument();
+  });
 });

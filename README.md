@@ -111,7 +111,7 @@ Asterisk denotes an optional exercise
 - [x] 5.11
 - [x] 5.12
 - [x] 5.13
-- [ ] 5.14
+- [x] 5.14
 - [ ] 5.15
 - [ ] 5.16
 - [ ] 5.17
