@@ -139,6 +139,17 @@ const App = () => {
     }
   };
 
+  const handleLike = async (id) => {
+    try {
+      const blogToUpdate = blogs.find((blog) => blog.id === id);
+      const updatedBlog = { ...blogToUpdate, likes: blogToUpdate.likes + 1 };
+      await axios.put(`/api/blogs/${id}`, updatedBlog);
+      setBlogs(blogs.map((blog) => (blog.id === id ? updatedBlog : blog)));
+    } catch (error) {
+      console.error("Like unsuccessful", error.message);
+    }
+  };
+
   return (
     <div>
       {" "}
@@ -196,6 +207,7 @@ const App = () => {
                 blog={blog}
                 deleteBlog={handleDeleteBlog}
                 user={user}
+                handleLike={handleLike}
               />
             ) : null
           )}

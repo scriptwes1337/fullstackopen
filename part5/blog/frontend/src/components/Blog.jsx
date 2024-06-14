@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 
-export const Blog = ({ blog, deleteBlog, user }) => {
+export const Blog = ({ blog, deleteBlog, user, handleLike }) => {
   const [blogData, setBlogData] = useState(blog);
   const [viewBlog, setViewBlog] = useState(false);
   const [buttonLabel, setButtonLabel] = useState("view");
@@ -16,11 +16,10 @@ export const Blog = ({ blog, deleteBlog, user }) => {
     }
   };
 
-  const handleLike = async () => {
+  const handleLikeClick = async () => {
     try {
-      blogData.likes += 1;
-      await axios.put(`/api/blogs/${blogData.id}`, blogData);
-      setBlogData({ ...blogData });
+      await handleLike(blogData.id);
+      setBlogData({ ...blogData, likes: blogData.likes + 1 });
     } catch (err) {
       console.log("Like unsuccessful", err.message);
     }
@@ -45,7 +44,7 @@ export const Blog = ({ blog, deleteBlog, user }) => {
           <p>Url: {blogData.url}</p>
           <p>
             Likes: {blogData.likes}
-            <button onClick={handleLike}>like</button>
+            <button onClick={handleLikeClick}>like</button>
           </p>
           <p>Author: {blogData.author}</p>
           {blog.user.username === user.username ? (

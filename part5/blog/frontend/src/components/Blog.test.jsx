@@ -12,19 +12,20 @@ const blog = {
   url: "http://testurl.com",
   likes: 10,
   user: {
-    username: "test"
-  }
+    username: "test",
+  },
 };
 
 const user = {
-  username: "test"
-}
+  username: "test",
+};
 
 describe("Exercises 5.13 to 5.16", () => {
   let app;
+  const mockHandler = vi.fn();
 
   beforeEach(() => {
-    app = render(<Blog blog={blog} user={user}/>);
+    app = render(<Blog blog={blog} user={user} handleLike={mockHandler} />);
   });
 
   // 5.13
@@ -50,5 +51,17 @@ describe("Exercises 5.13 to 5.16", () => {
 
     expect(urlElement).toBeInTheDocument();
     expect(likesElement).toBeInTheDocument();
+  });
+
+  // 5.15
+  test("5.15: Ensures that if like button is clicked twice, the event handler the component received as props is called twice", () => {
+    const viewButton = screen.getByText("view");
+    fireEvent.click(viewButton);
+
+    const likeButton = screen.getByText("like");
+    fireEvent.click(likeButton);
+    fireEvent.click(likeButton);
+
+    expect(mockHandler).toHaveBeenCalledTimes(2);
   });
 });
