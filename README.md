@@ -109,7 +109,7 @@ Asterisk denotes an optional exercise
 - [x] 5.9
 - [x] 5.10
 - [x] 5.11
-- [ ] 5.12
+- [x] 5.12
 - [ ] 5.13
 - [ ] 5.14
 - [ ] 5.15

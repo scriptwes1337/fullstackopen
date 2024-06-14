@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
+import PropTypes from "prop-types";
 
 export const Blog = ({ blog, deleteBlog, user }) => {
   const [blogData, setBlogData] = useState(blog);
@@ -59,6 +60,17 @@ export const Blog = ({ blog, deleteBlog, user }) => {
       )}
     </div>
   );
+};
+
+Blog.propTypes = {
+  blog: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    author: PropTypes.string.isRequired,
+    url: PropTypes.string.isRequired,
+    likes: PropTypes.number.isRequired,
+  }).isRequired,
+  deleteBlog: PropTypes.func.isRequired,
 };
 
 export default Blog;

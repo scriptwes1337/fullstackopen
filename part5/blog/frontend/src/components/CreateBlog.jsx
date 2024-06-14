@@ -7,7 +7,6 @@ export const CreateBlog = ({
   handleCreateBlog,
   children,
 }) => {
-  
   return (
     <>
       <h2>create new</h2>

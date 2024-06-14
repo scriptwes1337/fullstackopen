@@ -38,7 +38,6 @@ const App = () => {
       setBlogs(blogs.sort((a, b) => b.likes - a.likes));
     });
 
-
     const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
     if (currentUser) {
@@ -114,15 +113,15 @@ const App = () => {
       notifySuccess(
         `a new blog ${response.data[0].title} by ${response.data[0].author} added`
       );
-      setShowNewBlogForm(false)
+      setShowNewBlogForm(false);
     } catch (err) {
       notifyError(`Error creating blog: ${err.message}`);
     }
   };
 
   const handleshowNewBlogForm = () => {
-    setShowNewBlogForm(!showNewBlogForm)
-  }
+    setShowNewBlogForm(!showNewBlogForm);
+  };
 
   const handleDeleteBlog = async (id) => {
     const currentUser = JSON.parse(localStorage.getItem("currentUser"));
@@ -192,7 +191,12 @@ const App = () => {
           )}
           {blogs.map((blog) =>
             blog ? (
-              <Blog key={blog.id} blog={blog} deleteBlog={handleDeleteBlog} user={user}/>
+              <Blog
+                key={blog.id}
+                blog={blog}
+                deleteBlog={handleDeleteBlog}
+                user={user}
+              />
             ) : null
           )}
         </>
