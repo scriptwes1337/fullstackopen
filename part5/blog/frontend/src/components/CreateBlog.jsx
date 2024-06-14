@@ -5,7 +5,9 @@ export const CreateBlog = ({
   handleAuthor,
   handleUrl,
   handleCreateBlog,
+  children,
 }) => {
+  
   return (
     <>
       <h2>create new</h2>
@@ -39,6 +41,7 @@ export const CreateBlog = ({
       <div>
         <button onClick={handleCreateBlog}>create</button>
       </div>
+      {children}
     </>
   );
 };

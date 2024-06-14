@@ -102,8 +102,8 @@ Asterisk denotes an optional exercise
 - [x] 5.2
 - [x] 5.3
 - [x] 5.4
-- [ ] 5.5
-- [ ] 5.6
+- [x] 5.5
+- [x] 5.6
 - [ ] 5.7
 - [ ] 5.8
 - [ ] 5.9

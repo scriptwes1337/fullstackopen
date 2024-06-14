@@ -16,6 +16,7 @@ const App = () => {
   const [url, setUrl] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
+  const [showNewBlogForm, setShowNewBlogForm] = useState(false);
 
   const notifySuccess = (message) => {
     setSuccessMsg(message);
@@ -109,10 +110,15 @@ const App = () => {
       notifySuccess(
         `a new blog ${response.data[0].title} by ${response.data[0].author} added`
       );
+      setShowNewBlogForm(false)
     } catch (err) {
       notifyError(`Error creating blog: ${err.message}`);
     }
   };
+
+  const handleshowNewBlogForm = () => {
+    setShowNewBlogForm(!showNewBlogForm)
+  }
 
   return (
     <div>
@@ -152,12 +158,16 @@ const App = () => {
             {user.name} is logged in
             <button onClick={handleLogout}>logout</button>
           </p>
-          <CreateBlog
-            handleTitle={handleTitle}
-            handleAuthor={handleAuthor}
-            handleUrl={handleUrl}
-            handleCreateBlog={handleCreateBlog}
-          />
+          {showNewBlogForm ? (
+            <CreateBlog
+              handleTitle={handleTitle}
+              handleAuthor={handleAuthor}
+              handleUrl={handleUrl}
+              handleCreateBlog={handleCreateBlog}
+            >
+              <button onClick={handleshowNewBlogForm}>cancel</button>
+            </CreateBlog>
+          ) : <button onClick={handleshowNewBlogForm}>new blog</button>}
           {blogs.map((blog) => (
             <Blog key={blog.id} blog={blog} />
           ))}{" "}
