@@ -20,7 +20,7 @@ const user = {
   username: "test",
 };
 
-describe("Exercises 5.13 to 5.16", () => {
+describe("Exercises 5.13 to 5.15", () => {
   let app;
   const mockHandler = vi.fn();
 
@@ -64,36 +64,39 @@ describe("Exercises 5.13 to 5.16", () => {
 
     expect(mockHandler).toHaveBeenCalledTimes(2);
   });
+});
 
-  // 5.16
-  test("5.16: Check that the new blog form calls the event handler it received as props with the right details when a new blog is created", () => {
-    const mockTitle = vi.fn();
-    const mockAuthor = vi.fn();
-    const mockUrl = vi.fn();
-    const mockCreateBlog = vi.fn();
+// 5.16
+test("5.16: Check that the new blog form calls the event handler it received as props with the right details when a new blog is created", () => {
+   const mockCreateBlog = vi.fn();
+   const setTitle = vi.fn();
+   const setAuthor = vi.fn();
+   const setUrl = vi.fn();
 
-    render(
-      <CreateBlog
-        handleTitle={mockTitle}
-        handleAuthor={mockAuthor}
-        handleUrl={mockUrl}
-        handleCreateBlog={mockCreateBlog}
-      />
-    );
+   render(
+     <CreateBlog
+       title=""
+       author=""
+       url=""
+       setTitle={setTitle}
+       setAuthor={setAuthor}
+       setUrl={setUrl}
+       handleCreateBlog={mockCreateBlog}
+     />
+   );
 
-    const titleInput = screen.getByLabelText("title:");
-    const authorInput = screen.getByLabelText("author:");
-    const urlInput = screen.getByLabelText("url:");
-    const submitButton = screen.queryByText("create");
+  const titleInput = screen.getByLabelText("title:");
+  const authorInput = screen.getByLabelText("author:");
+  const urlInput = screen.getByLabelText("url:");
+  const submitButton = screen.getByText("create");
 
-    fireEvent.change(titleInput, { target: { value: "New Blog" } });
-    fireEvent.change(authorInput, { target: { value: "New Author" } });
-    fireEvent.change(urlInput, { target: { value: "http://newurl.com" } });
-    fireEvent.click(submitButton);
+  fireEvent.change(titleInput, { target: { value: "New Blog" } });
+  fireEvent.change(authorInput, { target: { value: "New Author" } });
+  fireEvent.change(urlInput, { target: { value: "http://newurl.com" } });
+  fireEvent.click(submitButton);
 
-    expect(mockCreateBlog).toHaveBeenCalledTimes(1);
-    expect(titleInput.value).toBe("New Blog");
-    expect(authorInput.value).toBe("New Author");
-    expect(urlInput.value).toBe("http://newurl.com");
-  });
+  expect(mockCreateBlog).toHaveBeenCalledTimes(1);
+  expect(setTitle).toHaveBeenCalledWith("New Blog");
+  expect(setAuthor).toHaveBeenCalledWith("New Author");
+  expect(setUrl).toHaveBeenCalledWith("http://newurl.com");
 });

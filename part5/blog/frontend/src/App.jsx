@@ -88,18 +88,6 @@ const App = () => {
     notifySuccess("Logged out successfully.");
   };
 
-  const handleTitle = (e) => {
-    setTitle(e.target.value);
-  };
-
-  const handleAuthor = (e) => {
-    setAuthor(e.target.value);
-  };
-
-  const handleUrl = (e) => {
-    setUrl(e.target.value);
-  };
-
   const handleCreateBlog = async () => {
     const newBlog = {
       title,
@@ -119,7 +107,7 @@ const App = () => {
     }
   };
 
-  const handleshowNewBlogForm = () => {
+  const handleShowNewBlogForm = () => {
     setShowNewBlogForm(!showNewBlogForm);
   };
 
@@ -190,15 +178,18 @@ const App = () => {
           </p>
           {showNewBlogForm ? (
             <CreateBlog
-              handleTitle={handleTitle}
-              handleAuthor={handleAuthor}
-              handleUrl={handleUrl}
+              title={title}
+              author={author}
+              url={url}
+              setTitle={setTitle}
+              setAuthor={setAuthor}
+              setUrl={setUrl}
               handleCreateBlog={handleCreateBlog}
             >
-              <button onClick={handleshowNewBlogForm}>cancel</button>
+              <button onClick={handleShowNewBlogForm}>cancel</button>
             </CreateBlog>
           ) : (
-            <button onClick={handleshowNewBlogForm}>new blog</button>
+            <button onClick={handleShowNewBlogForm}>new blog</button>
           )}
           {blogs.map((blog) =>
             blog ? (

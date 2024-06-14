@@ -1,46 +1,60 @@
 import React from "react";
 
 export const CreateBlog = ({
-  handleTitle,
-  handleAuthor,
-  handleUrl,
+  title,
+  author,
+  url,
+  setTitle,
+  setAuthor,
+  setUrl,
   handleCreateBlog,
   children,
 }) => {
   return (
     <>
       <h2>create new</h2>
-      <div data-testid="create-blog-form">
-        <label htmlFor="createBlogTitleInput">title:</label>
-        <input
-          type="text"
-          name="createBlogTitleInput"
-          id="createBlogTitleInput"
-          onChange={handleTitle}
-        />
-      </div>
-      <div>
-        <label htmlFor="createBlogAuthorInput">author:</label>
-        <input
-          type="text"
-          name="createBlogAuthorInput"
-          id="createBlogAuthorInput"
-          onChange={handleAuthor}
-        />
-      </div>
-      <div>
-        <label htmlFor="createBlogUrlInput">url:</label>
-        <input
-          type="text"
-          name="createBlogUrlInput"
-          id="createBlogUrlInput"
-          onChange={handleUrl}
-        />
-      </div>
-      <div>
-        <button onClick={handleCreateBlog}>create</button>
-      </div>
-      {children}
+      <form
+        data-testid="create-blog-form"
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleCreateBlog({title, author, url});
+        }}
+      >
+        <div>
+          <label htmlFor="createBlogTitleInput">title:</label>
+          <input
+            type="text"
+            name="createBlogTitleInput"
+            id="createBlogTitleInput"
+            value={title}
+            onChange={({ target }) => setTitle(target.value)}
+          />
+        </div>
+        <div>
+          <label htmlFor="createBlogAuthorInput">author:</label>
+          <input
+            type="text"
+            name="createBlogAuthorInput"
+            id="createBlogAuthorInput"
+            value={author}
+            onChange={({ target }) => setAuthor(target.value)}
+          />
+        </div>
+        <div>
+          <label htmlFor="createBlogUrlInput">url:</label>
+          <input
+            type="text"
+            name="createBlogUrlInput"
+            id="createBlogUrlInput"
+            value={url}
+            onChange={({ target }) => setUrl(target.value)}
+          />
+        </div>
+        <div>
+          <button type="submit">create</button>
+        </div>
+        {children}
+      </form>
     </>
   );
 };
