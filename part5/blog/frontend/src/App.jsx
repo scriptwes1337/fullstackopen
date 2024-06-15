@@ -97,7 +97,8 @@ const App = () => {
 
     try {
       const response = await blogService.createBlog(newBlog, user.token);
-      setBlogs([...blogs, response.data[0]]);
+      const updatedBlogs = await blogService.getAll();
+      setBlogs(updatedBlogs.sort((a, b) => b.likes - a.likes));
       notifySuccess(
         `a new blog ${response.data[0].title} by ${response.data[0].author} added`
       );

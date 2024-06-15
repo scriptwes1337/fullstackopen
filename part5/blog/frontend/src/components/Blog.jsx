@@ -48,7 +48,7 @@ export const Blog = ({ blog, deleteBlog, user, handleLike }) => {
           </p>
           <p>Author: {blogData.author}</p>
           {blog.user.username === user.username ? (
-            <button onClick={handleDelete}>delete</button>
+            <button onClick={handleDelete} data-testid="deleteBtn">delete</button>
           ) : null}
         </div>
       ) : (

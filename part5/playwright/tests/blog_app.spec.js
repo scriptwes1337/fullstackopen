@@ -61,10 +61,10 @@ describe("Blog app", () => {
     const newBlogBtn = page.getByTestId("newBlogBtn");
     await newBlogBtn.click();
 
-    const titleInput = page.getByTestId("newBlogTitleInput");
-    const authorInput = page.getByTestId("newBlogAuthorInput");
-    const urlInput = page.getByTestId("newBlogUrlInput");
-    const createBlogBtn = page.getByTestId("newBlogCreateBtn");
+    const titleInput = await page.getByTestId("newBlogTitleInput");
+    const authorInput = await page.getByTestId("newBlogAuthorInput");
+    const urlInput = await page.getByTestId("newBlogUrlInput");
+    const createBlogBtn = await page.getByTestId("newBlogCreateBtn");
 
     await createBlog(
       titleInput,
@@ -79,7 +79,7 @@ describe("Blog app", () => {
     const blogEntry = await page.getByTestId("blogEntry");
     await blogEntry.waitFor();
 
-    await expect(blogEntry).toBeVisible();
+    expect(blogEntry).toBeVisible();
   });
 
   test("5.20: Blog can be liked", async ({ page }) => {
@@ -91,13 +91,13 @@ describe("Blog app", () => {
       loginButton
     );
 
-    const newBlogBtn = page.getByTestId("newBlogBtn");
+    const newBlogBtn = await page.getByTestId("newBlogBtn");
     await newBlogBtn.click();
 
-    const titleInput = page.getByTestId("newBlogTitleInput");
-    const authorInput = page.getByTestId("newBlogAuthorInput");
-    const urlInput = page.getByTestId("newBlogUrlInput");
-    const createBlogBtn = page.getByTestId("newBlogCreateBtn");
+    const titleInput = await page.getByTestId("newBlogTitleInput");
+    const authorInput = await page.getByTestId("newBlogAuthorInput");
+    const urlInput = await page.getByTestId("newBlogUrlInput");
+    const createBlogBtn = await page.getByTestId("newBlogCreateBtn");
 
     await createBlog(
       titleInput,
@@ -109,13 +109,53 @@ describe("Blog app", () => {
       createBlogBtn
     );
 
-    const toggleBlogDetailsBtn = page.getByTestId("toggleBlogDetailsBtn");
+    const toggleBlogDetailsBtn = await page.getByTestId("toggleBlogDetailsBtn");
     await toggleBlogDetailsBtn.click();
 
     const likeBtn = page.getByTestId("likeBtn");
     await likeBtn.click();
 
-    const likeCount = page.getByTestId("likeCount");
+    const likeCount = await page.getByTestId("likeCount");
+    await likeCount.waitFor();
     await expect(likeCount).toHaveText("Likes: 1");
+  });
+
+  test("5.21: User who added the blog can delete the blog", async ({
+    page,
+  }) => {
+    await login(
+      usernameInput,
+      "username",
+      passwordInput,
+      "password",
+      loginButton
+    );
+
+    const newBlogBtn = page.getByTestId("newBlogBtn");
+    await newBlogBtn.click();
+
+    const titleInput = await page.getByTestId("newBlogTitleInput");
+    const authorInput = await page.getByTestId("newBlogAuthorInput");
+    const urlInput = await page.getByTestId("newBlogUrlInput");
+    const createBlogBtn = await page.getByTestId("newBlogCreateBtn");
+
+    await createBlog(
+      titleInput,
+      "testBlog",
+      authorInput,
+      "testAuthor",
+      urlInput,
+      "testUrl",
+      createBlogBtn
+    );
+
+    const toggleBlogDetailsBtn = await page.getByTestId("toggleBlogDetailsBtn");
+    await toggleBlogDetailsBtn.click();
+
+    const deleteBtn = await page.getByTestId("deleteBtn");
+    await deleteBtn.click();
+
+    const blogDetails = await page.getByTestId("blogDetails");
+    await expect(blogDetails).not.toBeVisible();
   });
 });
