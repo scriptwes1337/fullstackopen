@@ -34,6 +34,11 @@ app.use(userExtractor);
 app.use("/api/blogs", blogsRouter);
 app.use("/api/users", usersRouter);
 
+if (process.env.NODE_ENV === "test") {
+  const testRouter = require("./routes/test/testRouter");
+  app.use("/api/test", testRouter)
+}
+
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));

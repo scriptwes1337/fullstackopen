@@ -5,7 +5,8 @@
   "scripts": {
     "server": "cross-env NODE_ENV=production node --watch ./bin/www",
     "dev": "cross-env NODE_ENV=development node --watch ./bin/www",
-    "test": "cross-env NODE_ENV=test node --test"
+    "test": "cross-env NODE_ENV=test node --test",
+    "start:test": "NODE_ENV=test node ./bin/www"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",

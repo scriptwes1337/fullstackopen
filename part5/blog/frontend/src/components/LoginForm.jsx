@@ -11,6 +11,7 @@ export const LoginForm = ({ handleUsername, handlePassword, handleLogin }) => {
           name="usernameLoginInput"
           id="usernameLoginInput"
           onChange={handleUsername}
+          data-testid="username"
         />
       </div>
       <div>
@@ -20,10 +21,11 @@ export const LoginForm = ({ handleUsername, handlePassword, handleLogin }) => {
           name="passwordLoginInput"
           id="passwordLoginInput"
           onChange={handlePassword}
+          data-testid="password"
         />
       </div>
       <div>
-        <button onClick={handleLogin}>login</button>
+        <button onClick={handleLogin} data-testid="login">login</button>
       </div>
     </>
   );
