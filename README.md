@@ -129,7 +129,7 @@ Asterisk denotes an optional exercise
 - [x] 6.4
 - [x] 6.5
 - [x] 6.6
-- [ ] 6.7
+- [x] 6.7
 - [ ] 6.8
 - [ ] 6.9
 - [ ] 6.10
