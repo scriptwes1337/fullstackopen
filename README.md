@@ -124,7 +124,7 @@ Asterisk denotes an optional exercise
 
 ### Part 6
 - [x] 6.1
-- [ ] 6.2
+- [x] 6.2
 - [ ] 6.3
 - [ ] 6.4
 - [ ] 6.5
