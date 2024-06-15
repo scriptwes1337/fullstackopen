@@ -36,15 +36,15 @@ export const Blog = ({ blog, deleteBlog, user, handleLike }) => {
   return (
     <div>
       {viewBlog ? (
-        <div style={{ border: "1px solid black" }}>
+        <div style={{ border: "1px solid black" }} data-testId="blogDetails">
           <p>
             Title: {blogData.title}{" "}
             <button onClick={handleView}>{buttonLabel}</button>
           </p>{" "}
           <p>Url: {blogData.url}</p>
           <p>
-            Likes: {blogData.likes}
-            <button onClick={handleLikeClick}>like</button>
+            <span data-testid="likeCount">Likes: {blogData.likes}</span>
+            <button onClick={handleLikeClick} data-testid="likeBtn">like</button>
           </p>
           <p>Author: {blogData.author}</p>
           {blog.user.username === user.username ? (
@@ -54,7 +54,7 @@ export const Blog = ({ blog, deleteBlog, user, handleLike }) => {
       ) : (
         <div data-testid="blogEntry">
           <span>{blogData.title}</span> <span>{blogData.author}</span>
-          <button onClick={handleView}>{buttonLabel}</button>
+          <button onClick={handleView} data-testId="toggleBlogDetailsBtn">{buttonLabel}</button>
         </div>
       )}
     </div>

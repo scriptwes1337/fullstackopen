@@ -1,5 +1,5 @@
 const { test, expect, beforeEach, describe } = require("@playwright/test");
-import { login } from "./blog_app_helper";
+import { createBlog, login } from "./blog_app_helper";
 
 describe("Blog app", () => {
   let usernameInput;
@@ -66,14 +66,56 @@ describe("Blog app", () => {
     const urlInput = page.getByTestId("newBlogUrlInput");
     const createBlogBtn = page.getByTestId("newBlogCreateBtn");
 
-    await titleInput.fill("testBlog");
-    await authorInput.fill("testAuthor");
-    await urlInput.fill("testUrl");
-    await createBlogBtn.click();
+    await createBlog(
+      titleInput,
+      "testBlog",
+      authorInput,
+      "testAuthor",
+      urlInput,
+      "testUrl",
+      createBlogBtn
+    );
 
     const blogEntry = await page.getByTestId("blogEntry");
     await blogEntry.waitFor();
 
-    expect(blogEntry).toBeVisible();
+    await expect(blogEntry).toBeVisible();
+  });
+
+  test("5.20: Blog can be liked", async ({ page }) => {
+    await login(
+      usernameInput,
+      "username",
+      passwordInput,
+      "password",
+      loginButton
+    );
+
+    const newBlogBtn = page.getByTestId("newBlogBtn");
+    await newBlogBtn.click();
+
+    const titleInput = page.getByTestId("newBlogTitleInput");
+    const authorInput = page.getByTestId("newBlogAuthorInput");
+    const urlInput = page.getByTestId("newBlogUrlInput");
+    const createBlogBtn = page.getByTestId("newBlogCreateBtn");
+
+    await createBlog(
+      titleInput,
+      "testBlog",
+      authorInput,
+      "testAuthor",
+      urlInput,
+      "testUrl",
+      createBlogBtn
+    );
+
+    const toggleBlogDetailsBtn = page.getByTestId("toggleBlogDetailsBtn");
+    await toggleBlogDetailsBtn.click();
+
+    const likeBtn = page.getByTestId("likeBtn");
+    await likeBtn.click();
+
+    const likeCount = page.getByTestId("likeCount");
+    await expect(likeCount).toHaveText("Likes: 1");
   });
 });

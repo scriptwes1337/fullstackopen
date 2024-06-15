@@ -10,4 +10,14 @@ const login = async (
   await loginElement.click();
 };
 
-export { login };
+const createBlog = async (
+  titleInput, title, authorInput, author, urlInput, url, createBlogBtn
+) => {
+  
+    await titleInput.fill(title);
+    await authorInput.fill(author);
+    await urlInput.fill(url);
+    await createBlogBtn.click();
+}
+
+export { login, createBlog };
