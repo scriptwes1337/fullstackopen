@@ -97,6 +97,7 @@ const App = () => {
 
     try {
       const response = await blogService.createBlog(newBlog, user.token);
+      const createdBlog = response.data[0];
       const updatedBlogs = await blogService.getAll();
       setBlogs(updatedBlogs.sort((a, b) => b.likes - a.likes));
       notifySuccess(
@@ -177,7 +178,9 @@ const App = () => {
           <h2>blogs</h2>
           <p>
             {user.name} is logged in
-            <button onClick={handleLogout} data-testid="logoutBtn">logout</button>
+            <button onClick={handleLogout} data-testid="logoutBtn">
+              logout
+            </button>
           </p>
           {showNewBlogForm ? (
             <CreateBlog

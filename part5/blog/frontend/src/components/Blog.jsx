@@ -1,9 +1,13 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 
 export const Blog = ({ blog, deleteBlog, user, handleLike }) => {
   const [blogData, setBlogData] = useState(blog);
+
+  useEffect(() => {
+    setBlogData(blog);
+  }, [blog]);
   const [viewBlog, setViewBlog] = useState(false);
   const [buttonLabel, setButtonLabel] = useState("view");
 
@@ -36,7 +40,7 @@ export const Blog = ({ blog, deleteBlog, user, handleLike }) => {
   return (
     <div>
       {viewBlog ? (
-        <div style={{ border: "1px solid black" }} data-testId="blogDetails">
+        <div style={{ border: "1px solid black" }} data-testid="blogDetails">
           <p>
             Title: {blogData.title}{" "}
             <button onClick={handleView}>{buttonLabel}</button>
@@ -44,17 +48,24 @@ export const Blog = ({ blog, deleteBlog, user, handleLike }) => {
           <p>Url: {blogData.url}</p>
           <p>
             <span data-testid="likeCount">Likes: {blogData.likes}</span>
-            <button onClick={handleLikeClick} data-testid="likeBtn">like</button>
+            <button onClick={handleLikeClick} data-testid="likeBtn">
+              like
+            </button>
           </p>
           <p>Author: {blogData.author}</p>
-          {blog.user.username === user.username ? (
-            <button onClick={handleDelete} data-testid="deleteBtn">delete</button>
+          {blogData.user.username === user.username ? (
+            <div>
+            <button data-testid="deleteBtn" onClick={handleDelete}>
+              delete
+            </button>
+            </div>
           ) : null}
         </div>
       ) : (
         <div data-testid="blogEntry">
-          <span>{blogData.title}</span> <span>{blogData.author}</span>
-          <button onClick={handleView} data-testId="toggleBlogDetailsBtn">{buttonLabel}</button>
+          <span data-testid="blogEntryTitle">{blogData.title}</span>{" "}
+          <span>{blogData.author}</span>
+          <button onClick={handleView} data-testid="toggleBlogDetailsBtn">{buttonLabel}</button>
         </div>
       )}
     </div>
