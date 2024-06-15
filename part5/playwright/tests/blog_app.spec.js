@@ -18,7 +18,7 @@ describe("Blog app", () => {
     await page.goto(`/`);
     usernameInput = await page.getByTestId("username");
     passwordInput = await page.getByTestId("password");
-    loginButton = await page.getByTestId("login");
+    loginButton = await page.getByTestId("loginBtn");
   });
 
   test("5.17: Login form is shown", async ({ page }) => {
@@ -157,5 +157,60 @@ describe("Blog app", () => {
 
     const blogDetails = await page.getByTestId("blogDetails");
     await expect(blogDetails).not.toBeVisible();
+  });
+
+  test("5.22: Only the user who added the blog sees the blog's delete button", async ({
+    page, request
+  }) => {
+    await login(
+      usernameInput,
+      "username",
+      passwordInput,
+      "password",
+      loginButton
+    );
+
+    const newBlogBtn = page.getByTestId("newBlogBtn");
+    await newBlogBtn.click();
+
+    const titleInput = await page.getByTestId("newBlogTitleInput");
+    const authorInput = await page.getByTestId("newBlogAuthorInput");
+    const urlInput = await page.getByTestId("newBlogUrlInput");
+    const createBlogBtn = await page.getByTestId("newBlogCreateBtn");
+
+    await createBlog(
+      titleInput,
+      "testBlog",
+      authorInput,
+      "testAuthor",
+      urlInput,
+      "testUrl",
+      createBlogBtn
+    );
+
+    const logoutBtn = await page.getByTestId("logoutBtn");
+    await logoutBtn.click();
+
+    await request.post(`/api/users/register`, {
+      data: {
+        username: "username2",
+        name: "name2",
+        password: "password2",
+      },
+    });
+
+    await login(
+      usernameInput,
+      "username2",
+      passwordInput,
+      "password2",
+      loginButton
+    );
+    const toggleBlogDetailsBtn = await page.getByTestId("toggleBlogDetailsBtn");
+    await toggleBlogDetailsBtn.click();
+
+    const deleteBtn = await page.getByTestId("deleteBtn");
+
+    await expect(deleteBtn).not.toBeVisible();
   });
 });

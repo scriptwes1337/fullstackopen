@@ -25,7 +25,7 @@ export const LoginForm = ({ handleUsername, handlePassword, handleLogin }) => {
         />
       </div>
       <div>
-        <button onClick={handleLogin} data-testid="login">login</button>
+        <button onClick={handleLogin} data-testid="loginBtn">login</button>
       </div>
     </>
   );
