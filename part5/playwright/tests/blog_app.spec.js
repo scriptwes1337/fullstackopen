@@ -1,4 +1,5 @@
 const { test, expect, beforeEach, describe } = require("@playwright/test");
+import { login } from "./blog_app_helper";
 
 describe("Blog app", () => {
   let usernameInput;
@@ -9,9 +10,9 @@ describe("Blog app", () => {
     await request.post(`/api/test/reset`);
     await request.post(`/api/users/register`, {
       data: {
-        username: "user1",
-        name: "user1",
-        password: "password1",
+        username: "username",
+        name: "name",
+        password: "password",
       },
     });
     await page.goto(`/`);
@@ -27,18 +28,52 @@ describe("Blog app", () => {
   });
 
   test("5.18: Login succeeds with correct credentials", async ({ page }) => {
-    await usernameInput.fill("user1");
-    await passwordInput.fill("password1");
-    await loginButton.click();
-
+    await login(
+      usernameInput,
+      "username",
+      passwordInput,
+      "password",
+      loginButton
+    );
     await expect(page.getByTestId("successMsg")).toBeVisible();
   });
 
-    test("5.19: Login fails with incorrect credentials", async ({ page }) => {
-      await usernameInput.fill("wronguser");
-      await passwordInput.fill("wrongpassword");
-      await loginButton.click();
+  test("5.18: Login fails with incorrect credentials", async ({ page }) => {
+    await login(
+      usernameInput,
+      "wrong username",
+      passwordInput,
+      "wrong password",
+      loginButton
+    );
+    await expect(page.getByTestId("errorMsg")).toBeVisible();
+  });
 
-      await expect(page.getByTestId("errorMsg")).toBeVisible();
-    });
+  test("5.19: A logged in user can create a blog", async ({ page }) => {
+    await login(
+      usernameInput,
+      "username",
+      passwordInput,
+      "password",
+      loginButton
+    );
+
+    const newBlogBtn = page.getByTestId("newBlogBtn");
+    await newBlogBtn.click();
+
+    const titleInput = page.getByTestId("newBlogTitleInput");
+    const authorInput = page.getByTestId("newBlogAuthorInput");
+    const urlInput = page.getByTestId("newBlogUrlInput");
+    const createBlogBtn = page.getByTestId("newBlogCreateBtn");
+
+    await titleInput.fill("testBlog");
+    await authorInput.fill("testAuthor");
+    await urlInput.fill("testUrl");
+    await createBlogBtn.click();
+
+    const blogEntry = await page.getByTestId("blogEntry");
+    await blogEntry.waitFor();
+
+    expect(blogEntry).toBeVisible();
+  });
 });

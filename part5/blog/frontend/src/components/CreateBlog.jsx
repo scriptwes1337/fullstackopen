@@ -17,7 +17,7 @@ export const CreateBlog = ({
         data-testid="create-blog-form"
         onSubmit={(e) => {
           e.preventDefault();
-          handleCreateBlog({title, author, url});
+          handleCreateBlog({ title, author, url });
         }}
       >
         <div>
@@ -28,6 +28,7 @@ export const CreateBlog = ({
             id="createBlogTitleInput"
             value={title}
             onChange={({ target }) => setTitle(target.value)}
+            data-testid="newBlogTitleInput"
           />
         </div>
         <div>
@@ -38,6 +39,7 @@ export const CreateBlog = ({
             id="createBlogAuthorInput"
             value={author}
             onChange={({ target }) => setAuthor(target.value)}
+            data-testid="newBlogAuthorInput"
           />
         </div>
         <div>
@@ -48,10 +50,13 @@ export const CreateBlog = ({
             id="createBlogUrlInput"
             value={url}
             onChange={({ target }) => setUrl(target.value)}
+            data-testid="newBlogUrlInput"
           />
         </div>
         <div>
-          <button type="submit">create</button>
+          <button type="submit" data-testid="newBlogCreateBtn">
+            create
+          </button>
         </div>
         {children}
       </form>

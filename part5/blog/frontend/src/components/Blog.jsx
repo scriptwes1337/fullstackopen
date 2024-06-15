@@ -52,7 +52,7 @@ export const Blog = ({ blog, deleteBlog, user, handleLike }) => {
           ) : null}
         </div>
       ) : (
-        <div>
+        <div data-testid="blogEntry">
           <span>{blogData.title}</span> <span>{blogData.author}</span>
           <button onClick={handleView}>{buttonLabel}</button>
         </div>

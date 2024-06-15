@@ -191,7 +191,9 @@ const App = () => {
               <button onClick={handleShowNewBlogForm}>cancel</button>
             </CreateBlog>
           ) : (
-            <button onClick={handleShowNewBlogForm}>new blog</button>
+            <button onClick={handleShowNewBlogForm} data-testid="newBlogBtn">
+              new blog
+            </button>
           )}
           {blogs.map((blog) =>
             blog ? (
