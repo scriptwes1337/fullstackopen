@@ -151,6 +151,7 @@ const App = () => {
             border: "2px green solid",
             borderRadius: "10px",
           }}
+          data-testid="successMsg"
         >
           {successMsg}
         </p>
@@ -165,6 +166,7 @@ const App = () => {
             border: "2px green solid",
             borderRadius: "10px",
           }}
+          data-testid="errorMsg"
         >
           {errorMsg}
         </p>
