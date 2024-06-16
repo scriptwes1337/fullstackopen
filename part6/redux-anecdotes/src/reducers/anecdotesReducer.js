@@ -28,13 +28,15 @@ const anecdoteSlice = createSlice({
     vote(state, action) {
       const id = action.payload;
       const anecdoteToUpdate = state.find((anecdote) => anecdote.id === id);
-      const updatedAnecdote = {
-        ...anecdoteToUpdate,
-        votes: anecdoteToUpdate.votes + 1,
-      };
-      return state
-        .map((anecdote) => (anecdote.id === id ? updatedAnecdote : anecdote))
-        .sort((a, b) => b.votes - a.votes);
+      if (anecdoteToUpdate) {
+        const updatedAnecdote = {
+          ...anecdoteToUpdate,
+          votes: anecdoteToUpdate.votes + 1,
+        };
+       return state
+          .map((anecdote) => (anecdote.id === id ? updatedAnecdote : anecdote))
+          .sort((a, b) => b.votes - a.votes);
+      }
     },
     createAnecdote(state, action) {
       const newAnecdote = {
