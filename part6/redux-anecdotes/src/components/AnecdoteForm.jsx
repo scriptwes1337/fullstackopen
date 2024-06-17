@@ -1,11 +1,10 @@
 import React from "react";
 import { useDispatch } from "react-redux";
-import { appendAnecdote, createAnecdote } from "../reducers/anecdotesReducer";
+import { createAnecdote } from "../reducers/anecdotesReducer";
 import {
-  addedAnecdote,
+  addedAnecdoteNotif,
   resetNotification,
 } from "../reducers/notificationReducer";
-import anecdoteService from "../services/anecdotes";
 
 export const AnecdoteForm = () => {
   const dispatch = useDispatch();
@@ -15,7 +14,7 @@ export const AnecdoteForm = () => {
     const content = e.target.anecdote.value;
     e.target.anecdote.value = "";
     dispatch(createAnecdote(content))
-    dispatch(addedAnecdote(content));
+    dispatch(addedAnecdoteNotif(content));
     setTimeout(() => {
       dispatch(resetNotification());
     }, 5000);
