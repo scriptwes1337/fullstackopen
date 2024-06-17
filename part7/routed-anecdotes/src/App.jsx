@@ -94,6 +94,7 @@ const CreateNew = ({ addNew }) => {
       votes: 0,
     });
     navigate("/");
+    console.log(content);
   };
 
   const handleReset = () => {
@@ -108,15 +109,15 @@ const CreateNew = ({ addNew }) => {
       <form onSubmit={handleSubmit}>
         <div>
           content
-          <input {...content} />
+          <input {...content.inputProps} />
         </div>
         <div>
           author
-          <input {...author} />
+          <input {...author.inputProps} />
         </div>
         <div>
           url for more info
-          <input {...info} />
+          <input {...info.inputProps} />
         </div>
         <button type="submit">create</button>
         <button type="reset" onClick={handleReset}>
