@@ -143,7 +143,7 @@ Asterisk denotes an optional exercise
 - [x] 6.18
 - [x] 6.19
 - [x] 6.20
-- [ ] 6.21
+- [X] 6.21
 - [ ] 6.22
 - [ ] 6.23
 - [ ] 6.24
