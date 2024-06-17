@@ -11,16 +11,16 @@ export const useField = (type) => {
     setValue("");
   };
 
-   const inputProps = {
-     value,
-     onChange,
-   };
+  const inputProps = {
+    value,
+    onChange,
+  };
 
   return {
     type,
     value,
     onChange,
     reset,
-    inputProps
+    inputProps,
   };
 };
