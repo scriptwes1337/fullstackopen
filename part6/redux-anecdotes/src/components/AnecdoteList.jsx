@@ -18,7 +18,7 @@ export const AnecdoteList = () => {
   const handleVote = (id) => {
     const votedAnecdote = anecdotes.find((anecdote) => anecdote.id === id);
     dispatch(voteAnecdote(votedAnecdote));
-    dispatch(setNotification(`you voted ${votedAnecdote.content}`, 5000));
+    dispatch(setNotification(`you voted ${votedAnecdote.content}`, 5));
   };
 
   return (

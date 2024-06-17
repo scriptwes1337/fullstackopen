@@ -13,7 +13,7 @@ export const AnecdoteForm = () => {
     const content = e.target.anecdote.value;
     e.target.anecdote.value = "";
     dispatch(createAnecdote(content));
-    dispatch(setNotification(`you added ${content}`, 5000));
+    dispatch(setNotification(`you added ${content}`, 5));
   };
   return (
     <>
