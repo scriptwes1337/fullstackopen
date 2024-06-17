@@ -150,8 +150,8 @@ Asterisk denotes an optional exercise
 
 ### Part 7
 - [x] 7.1
-- [ ] 7.2
-- [ ] 7.3
+- [x] 7.2
+- [x] 7.3
 - [ ] 7.4
 - [ ] 7.5
 - [ ] 7.6
