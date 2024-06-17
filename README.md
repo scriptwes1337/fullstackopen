@@ -145,8 +145,8 @@ Asterisk denotes an optional exercise
 - [x] 6.20
 - [X] 6.21
 - [x] 6.22
-- [ ] 6.23
-- [ ] 6.24
+- [x] 6.23
+- [x] 6.24
 
 ### Part 7
 - [ ] 7.1
