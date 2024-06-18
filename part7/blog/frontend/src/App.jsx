@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Blog from "./components/Blog";
 import blogService from "./services/blogs";
 import userService from "./services/users";
 import { LoginForm } from "./components/LoginForm";
 import { CreateBlog } from "./components/CreateBlog";
 import axios from "axios";
+import { setNotification } from "./reducers/notificationReducer";
 
 const App = () => {
+  const dispatch = useDispatch();
   const [blogs, setBlogs] = useState([]);
   const [isAuth, setIsAuth] = useState(false);
   const [usernameInput, setUsernameInput] = useState("");
@@ -15,23 +18,10 @@ const App = () => {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
-  const [successMsg, setSuccessMsg] = useState("");
-  const [errorMsg, setErrorMsg] = useState("");
   const [showNewBlogForm, setShowNewBlogForm] = useState(false);
 
-  const notifySuccess = (message) => {
-    setSuccessMsg(message);
-    setTimeout(() => {
-      setSuccessMsg("");
-    }, 5000);
-  };
-
-  const notifyError = (message) => {
-    setErrorMsg(message);
-    setTimeout(() => {
-      setErrorMsg("");
-    }, 5000);
-  };
+  const notification = useSelector((state) => state.notification);
+  console.log(notification);
 
   useEffect(() => {
     blogService.getAll().then((blogs) => {
@@ -61,7 +51,7 @@ const App = () => {
       const { name, username, token } = response.data;
 
       if (!token) {
-        return notifyError("Incorrect username or password");
+        return dispatch(setNotification("Wrong username or password", 5));
       }
 
       const newUser = {
@@ -72,12 +62,14 @@ const App = () => {
       setUser(newUser);
       localStorage.setItem("currentUser", JSON.stringify(newUser));
       setIsAuth(true);
-      notifySuccess("Logged in successfully!");
+      dispatch(setNotification("Logged in successfully!", 5));
     } catch (err) {
       if (err.response.status === 401) {
-        notifyError("Incorrect username or password");
+        dispatch(setNotification("Incorrect username or password", 5));
       } else {
-        notifyError(`An error occurred during login: ${err.message}`);
+        dispatch(
+          setNotification(`An error occurred during login: ${err.message}`, 5),
+        );
       }
     }
   };
@@ -85,7 +77,7 @@ const App = () => {
   const handleLogout = (e) => {
     localStorage.clear();
     setIsAuth(false);
-    notifySuccess("Logged out successfully.");
+    dispatch(setNotification("Logged out successfully.", 5));
   };
 
   const handleCreateBlog = async () => {
@@ -100,12 +92,15 @@ const App = () => {
       const createdBlog = response.data[0];
       const updatedBlogs = await blogService.getAll();
       setBlogs(updatedBlogs.sort((a, b) => b.likes - a.likes));
-      notifySuccess(
-        `a new blog ${response.data[0].title} by ${response.data[0].author} added`,
+      dispatch(
+        setNotification(
+          `a new blog ${response.data[0].title} by ${response.data[0].author} added`,
+          5,
+        ),
       );
       setShowNewBlogForm(false);
     } catch (err) {
-      notifyError(`Error creating blog: ${err.message}`);
+      dispatch(setNotification(`Error creating blog: ${err.message}`, 5));
     }
   };
 
@@ -122,10 +117,10 @@ const App = () => {
         },
       });
       setBlogs(blogs.filter((blog) => blog.id !== id));
-      notifySuccess("Blog deleted successfully.");
+      dispatch(setNotification("Blog deleted successfully.", 5));
     } catch (err) {
       console.log("Delete unsuccessful", err.message);
-      notifyError("Error deleting blog: " + err.message);
+      dispatch(setNotification("Error deleting blog: " + err.message, 5));
     }
   };
 
@@ -142,35 +137,19 @@ const App = () => {
 
   return (
     <div>
-      {" "}
-      {successMsg === "" ? null : (
+      {notification === "" ? null : (
         <p
           style={{
-            color: "green",
+            color: "grey",
             fontSize: "1.5rem",
             backgroundColor: "lightgrey",
             padding: "0.8rem",
-            border: "2px green solid",
+            border: "2px grey solid",
             borderRadius: "10px",
           }}
-          data-testid="successMsg"
+          data-testid="notification"
         >
-          {successMsg}
-        </p>
-      )}
-      {errorMsg === "" ? null : (
-        <p
-          style={{
-            color: "green",
-            fontSize: "1.5rem",
-            backgroundColor: "lightgrey",
-            padding: "0.8rem",
-            border: "2px green solid",
-            borderRadius: "10px",
-          }}
-          data-testid="errorMsg"
-        >
-          {errorMsg}
+          {notification}
         </p>
       )}
       {isAuth ? (
