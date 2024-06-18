@@ -11,6 +11,7 @@ import { deleteBlog, initializeBlogs } from "./reducers/blogReducer";
 import { setUser } from "./reducers/userReducer";
 import { Link, Route, Routes, useMatch, useNavigate } from "react-router-dom";
 import { Users } from "./components/Users";
+import { User } from "./components/User";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -163,6 +164,7 @@ const App = () => {
       </p>
       <Routes>
         <Route path="/users" element={<Users />} />
+        <Route path="/users/:id" element={<User />} />
         <Route
           path="/"
           element={

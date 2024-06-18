@@ -11,7 +11,17 @@ router.get("/all", async (req, res) => {
 
     res.status(200).json(allUsers);
   } catch (err) {
-    res.status(400).json({ error: err });
+    res.status(400).json({ error: err.message });
+  }
+});
+
+router.get("/:id", async (req, res) => {
+  try {
+    const requestedId = req.params["id"];
+    const user = await User.findById(requestedId).populate("blogs");
+    res.status(200).json(user);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
   }
 });
 
@@ -42,7 +52,7 @@ router.post("/register", async (req, res) => {
     const savedUser = await user.save();
     res.status(201).json(savedUser);
   } catch (err) {
-    res.status(400).json({ error: err });
+    res.status(400).json({ error: err.message });
   }
 });
 
@@ -71,7 +81,7 @@ router.post("/login", async (req, res) => {
       name: user.name,
     });
   } catch (err) {
-    res.status(400).json({ error: err });
+    res.status(400).json({ error: err.message });
   }
 });
 

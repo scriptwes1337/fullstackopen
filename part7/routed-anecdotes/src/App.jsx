@@ -146,8 +146,6 @@ const App = () => {
     },
   ]);
 
-  const [notification, setNotification] = useState("");
-
   const anecdoteMatch = useMatch("/:id");
 
   const anecdote = anecdoteMatch
