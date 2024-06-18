@@ -9,9 +9,10 @@ import axios from "axios";
 import { setNotification } from "./reducers/notificationReducer";
 import { deleteBlog, initializeBlogs } from "./reducers/blogReducer";
 import { setUser } from "./reducers/userReducer";
-import { Link, Route, Routes, useMatch, useNavigate } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import { Users } from "./components/Users";
 import { User } from "./components/User";
+import IndividualBlog from "./components/IndividualBlog";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -163,6 +164,16 @@ const App = () => {
         </button>
       </p>
       <Routes>
+        <Route
+          path="/blogs/:id"
+          element={
+            <IndividualBlog
+              deleteBlog={handleDeleteBlog}
+              user={user}
+              handleLike={handleLike}
+            />
+          }
+        />
         <Route path="/users" element={<Users />} />
         <Route path="/users/:id" element={<User />} />
         <Route
@@ -195,9 +206,6 @@ const App = () => {
                     <Blog
                       key={blog.id}
                       blog={blog}
-                      deleteBlog={handleDeleteBlog}
-                      user={user}
-                      handleLike={handleLike}
                     />
                   ) : null,
                 )}
