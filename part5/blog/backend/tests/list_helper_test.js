@@ -247,6 +247,8 @@ describe("Testing the backend", () => {
       .get("/api/blogs")
       .expect("Content-Type", /application\/json/)
       .expect(200);
+
+
     const testBlogId = findTestBlog.body[0].id;
 
     const updatedTestBlog = {
@@ -255,6 +257,7 @@ describe("Testing the backend", () => {
       title: "updatedTest",
       likes: 0,
       id: testBlogId,
+      user: findTestBlog.body[0].user.id
     };
     await api.put(`/api/blogs/${testBlogId}`).send(updatedTestBlog).expect(200);
 

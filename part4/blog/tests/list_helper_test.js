@@ -253,6 +253,7 @@ describe("Testing the backend", () => {
       title: "updatedTest",
       likes: 0,
       id: testBlogId,
+      user: findTestBlog.body[0].user.id
     };
     await api.put(`/api/blogs/${testBlogId}`).send(updatedTestBlog).expect(200);
 
@@ -265,7 +266,6 @@ describe("Testing the backend", () => {
   });
 
   after(async () => {
-    await Blog.deleteMany();
     await mongoose.connection.close();
   });
 });

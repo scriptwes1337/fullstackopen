@@ -76,16 +76,8 @@ router.delete("/:id", async (req, res, next) => {
 router.put("/:id", async (req, res, next) => {
   try {
     const requestedId = req.params["id"];
-
-    const updatedBlog = {
-      title: req.body.title,
-      author: req.body.author,
-      url: req.body.url,
-      likes: req.body.likes,
-      id: req.body.id,
-      user: req.body.user?.id
-    }
-    const data = await Blog.findByIdAndUpdate(requestedId, updatedBlog)
+    const updatedBlog = req.body;
+    const data = await Blog.findByIdAndUpdate(requestedId, updatedBlog);
     res.status(200).json(data);
   } catch (err) {
     next(err);
