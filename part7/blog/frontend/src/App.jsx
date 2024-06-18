@@ -9,7 +9,7 @@ import axios from "axios";
 import { setNotification } from "./reducers/notificationReducer";
 import { deleteBlog, initializeBlogs } from "./reducers/blogReducer";
 import { setUser } from "./reducers/userReducer";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, Link } from "react-router-dom";
 import { Users } from "./components/Users";
 import { User } from "./components/User";
 import IndividualBlog from "./components/IndividualBlog";
@@ -139,6 +139,10 @@ const App = () => {
     }
   };
 
+  const padding = {
+    paddingRight: 5,
+  };
+
   return (
     <div>
       {notification === "" ? null : (
@@ -156,13 +160,22 @@ const App = () => {
           {notification}
         </p>
       )}
+
+      <div>
+        <Link to="/" style={padding}>
+          blogs
+        </Link>
+        <Link to="/users" style={padding}>
+          users
+        </Link>
+        <span>
+          {user.name} is logged in
+          <button onClick={handleLogout} data-testid="logoutBtn">
+            logout
+          </button>
+        </span>
+      </div>
       <h2>blogs</h2>
-      <p>
-        {user.name} is logged in
-        <button onClick={handleLogout} data-testid="logoutBtn">
-          logout
-        </button>
-      </p>
       <Routes>
         <Route
           path="/blogs/:id"
@@ -202,12 +215,7 @@ const App = () => {
                   </button>
                 )}
                 {blogs.map((blog) =>
-                  blog ? (
-                    <Blog
-                      key={blog.id}
-                      blog={blog}
-                    />
-                  ) : null,
+                  blog ? <Blog key={blog.id} blog={blog} /> : null,
                 )}
               </>
             ) : (
