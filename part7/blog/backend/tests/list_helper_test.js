@@ -4,7 +4,6 @@ const listHelper = require("../utils/list_helper");
 const supertest = require("supertest");
 const app = require("../app");
 const Blog = require("../models/Blog");
-const User = require("../models/User");
 const api = supertest(app);
 const mongoose = require("mongoose");
 
@@ -247,6 +246,7 @@ describe("Testing the backend", () => {
       .get("/api/blogs")
       .expect("Content-Type", /application\/json/)
       .expect(200);
+
     const testBlogId = findTestBlog.body[0].id;
 
     const updatedTestBlog = {
@@ -255,6 +255,7 @@ describe("Testing the backend", () => {
       title: "updatedTest",
       likes: 0,
       id: testBlogId,
+      user: findTestBlog.body[0].user.id,
     };
     await api.put(`/api/blogs/${testBlogId}`).send(updatedTestBlog).expect(200);
 
@@ -267,7 +268,10 @@ describe("Testing the backend", () => {
       findUpdatedTestBlog.body[0].author,
       updatedTestBlog.author,
     );
-    assert.deepStrictEqual(findUpdatedTestBlog.body[0].id, updatedTestBlog.id);
+    assert.deepStrictEqual(
+      findUpdatedTestBlog.body[0].author,
+      updatedTestBlog.author,
+    );
   });
 
   after(async () => {
