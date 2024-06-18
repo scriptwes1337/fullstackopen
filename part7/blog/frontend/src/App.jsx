@@ -7,10 +7,10 @@ import { LoginForm } from "./components/LoginForm";
 import { CreateBlog } from "./components/CreateBlog";
 import axios from "axios";
 import { setNotification } from "./reducers/notificationReducer";
+import { appendBlog, initializeBlogs } from "./reducers/blogReducer";
 
 const App = () => {
   const dispatch = useDispatch();
-  const [blogs, setBlogs] = useState([]);
   const [isAuth, setIsAuth] = useState(false);
   const [usernameInput, setUsernameInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
@@ -21,12 +21,10 @@ const App = () => {
   const [showNewBlogForm, setShowNewBlogForm] = useState(false);
 
   const notification = useSelector((state) => state.notification);
-  console.log(notification);
+  const blogs = useSelector((state) => state.blogs);
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => {
-      setBlogs(blogs.sort((a, b) => b.likes - a.likes));
-    });
+    dispatch(initializeBlogs());
 
     const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
@@ -90,8 +88,7 @@ const App = () => {
     try {
       const response = await blogService.createBlog(newBlog, user.token);
       const createdBlog = response.data[0];
-      const updatedBlogs = await blogService.getAll();
-      setBlogs(updatedBlogs.sort((a, b) => b.likes - a.likes));
+      dispatch(appendBlog(createdBlog));
       dispatch(
         setNotification(
           `a new blog ${response.data[0].title} by ${response.data[0].author} added`,
