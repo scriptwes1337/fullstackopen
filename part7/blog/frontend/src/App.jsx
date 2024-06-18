@@ -8,20 +8,20 @@ import { CreateBlog } from "./components/CreateBlog";
 import axios from "axios";
 import { setNotification } from "./reducers/notificationReducer";
 import { deleteBlog, initializeBlogs } from "./reducers/blogReducer";
+import { setUser } from "./reducers/userReducer";
 
 const App = () => {
   const dispatch = useDispatch();
   const [isAuth, setIsAuth] = useState(false);
   const [usernameInput, setUsernameInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
-  const [user, setUser] = useState({});
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
   const [showNewBlogForm, setShowNewBlogForm] = useState(false);
-
   const notification = useSelector((state) => state.notification);
   const blogs = useSelector((state) => state.blogs);
+  const user = useSelector((state) => state.user);
 
   useEffect(() => {
     dispatch(initializeBlogs());
@@ -30,7 +30,7 @@ const App = () => {
 
     if (currentUser) {
       setIsAuth(true);
-      setUser(currentUser);
+      dispatch(setUser(currentUser));
     }
   }, []);
 
@@ -57,7 +57,7 @@ const App = () => {
         username,
         token,
       };
-      setUser(newUser);
+      dispatch(setUser(newUser))
       localStorage.setItem("currentUser", JSON.stringify(newUser));
       setIsAuth(true);
       dispatch(setNotification("Logged in successfully!", 5));
