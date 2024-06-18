@@ -9,6 +9,8 @@ import axios from "axios";
 import { setNotification } from "./reducers/notificationReducer";
 import { deleteBlog, initializeBlogs } from "./reducers/blogReducer";
 import { setUser } from "./reducers/userReducer";
+import { Link, Route, Routes, useMatch, useNavigate } from "react-router-dom";
+import { Users } from "./components/Users";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -57,7 +59,7 @@ const App = () => {
         username,
         token,
       };
-      dispatch(setUser(newUser))
+      dispatch(setUser(newUser));
       localStorage.setItem("currentUser", JSON.stringify(newUser));
       setIsAuth(true);
       dispatch(setNotification("Logged in successfully!", 5));
@@ -152,51 +154,62 @@ const App = () => {
           {notification}
         </p>
       )}
-      {isAuth ? (
-        <>
-          <h2>blogs</h2>
-          <p>
-            {user.name} is logged in
-            <button onClick={handleLogout} data-testid="logoutBtn">
-              logout
-            </button>
-          </p>
-          {showNewBlogForm ? (
-            <CreateBlog
-              title={title}
-              author={author}
-              url={url}
-              setTitle={setTitle}
-              setAuthor={setAuthor}
-              setUrl={setUrl}
-              handleCreateBlog={handleCreateBlog}
-            >
-              <button onClick={handleShowNewBlogForm}>cancel</button>
-            </CreateBlog>
-          ) : (
-            <button onClick={handleShowNewBlogForm} data-testid="newBlogBtn">
-              new blog
-            </button>
-          )}
-          {blogs.map((blog) =>
-            blog ? (
-              <Blog
-                key={blog.id}
-                blog={blog}
-                deleteBlog={handleDeleteBlog}
-                user={user}
-                handleLike={handleLike}
+      <h2>blogs</h2>
+      <p>
+        {user.name} is logged in
+        <button onClick={handleLogout} data-testid="logoutBtn">
+          logout
+        </button>
+      </p>
+      <Routes>
+        <Route path="/users" element={<Users />} />
+        <Route
+          path="/"
+          element={
+            isAuth ? (
+              <>
+                {showNewBlogForm ? (
+                  <CreateBlog
+                    title={title}
+                    author={author}
+                    url={url}
+                    setTitle={setTitle}
+                    setAuthor={setAuthor}
+                    setUrl={setUrl}
+                    handleCreateBlog={handleCreateBlog}
+                  >
+                    <button onClick={handleShowNewBlogForm}>cancel</button>
+                  </CreateBlog>
+                ) : (
+                  <button
+                    onClick={handleShowNewBlogForm}
+                    data-testid="newBlogBtn"
+                  >
+                    new blog
+                  </button>
+                )}
+                {blogs.map((blog) =>
+                  blog ? (
+                    <Blog
+                      key={blog.id}
+                      blog={blog}
+                      deleteBlog={handleDeleteBlog}
+                      user={user}
+                      handleLike={handleLike}
+                    />
+                  ) : null,
+                )}
+              </>
+            ) : (
+              <LoginForm
+                handleUsername={handleUsername}
+                handlePassword={handlePassword}
+                handleLogin={handleLogin}
               />
-            ) : null,
-          )}
-        </>
-      ) : (
-        <LoginForm
-          handleUsername={handleUsername}
-          handlePassword={handlePassword}
-          handleLogin={handleLogin}
+            )
+          }
         />
-      )}
+      </Routes>
     </div>
   );
 };
