@@ -7,7 +7,7 @@ import { LoginForm } from "./components/LoginForm";
 import { CreateBlog } from "./components/CreateBlog";
 import axios from "axios";
 import { setNotification } from "./reducers/notificationReducer";
-import { appendBlog, initializeBlogs } from "./reducers/blogReducer";
+import { deleteBlog, initializeBlogs } from "./reducers/blogReducer";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -87,8 +87,7 @@ const App = () => {
 
     try {
       const response = await blogService.createBlog(newBlog, user.token);
-      const createdBlog = response.data[0];
-      dispatch(appendBlog(createdBlog));
+      dispatch(initializeBlogs());
       dispatch(
         setNotification(
           `a new blog ${response.data[0].title} by ${response.data[0].author} added`,
@@ -113,7 +112,7 @@ const App = () => {
           Authorization: `Bearer ${currentUser.token}`,
         },
       });
-      setBlogs(blogs.filter((blog) => blog.id !== id));
+      dispatch(deleteBlog(id));
       dispatch(setNotification("Blog deleted successfully.", 5));
     } catch (err) {
       console.log("Delete unsuccessful", err.message);
@@ -124,9 +123,13 @@ const App = () => {
   const handleLike = async (id) => {
     try {
       const blogToUpdate = blogs.find((blog) => blog.id === id);
-      const updatedBlog = { ...blogToUpdate, likes: blogToUpdate.likes + 1 };
+      const updatedBlog = {
+        ...blogToUpdate,
+        likes: blogToUpdate.likes + 1,
+        user: blogToUpdate.user.id,
+      };
       await axios.put(`/api/blogs/${id}`, updatedBlog);
-      setBlogs(blogs.map((blog) => (blog.id === id ? updatedBlog : blog)));
+      dispatch(initializeBlogs());
     } catch (error) {
       console.error("Like unsuccessful", error.message);
     }
