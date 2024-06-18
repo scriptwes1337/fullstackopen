@@ -94,4 +94,18 @@ router.put("/:id", async (req, res, next) => {
   }
 });
 
+router.put("/:id/comments", async (req, res, next) => {
+  try {
+    const requestedId = req.params["id"];
+    const data = await Blog.findByIdAndUpdate(
+      requestedId,
+      { $push: { comments: req.body.comment } },
+      { new: true },
+    );
+    res.status(200).json(data);
+  } catch (err) {
+    next(err);
+  }
+});
+
 module.exports = router;
