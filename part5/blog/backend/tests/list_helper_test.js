@@ -117,8 +117,7 @@ describe("Testing the backend", () => {
   let token;
 
   beforeEach(async () => {
-    await Blog.deleteMany();
-    await User.deleteMany();
+    await api.post("/api/test/reset").expect(204);
 
     const newUser = {
       username: "testuser",
@@ -230,7 +229,10 @@ describe("Testing the backend", () => {
 
     const testBlogId = findTestBlog.body[0].id;
 
-    await api.delete(`/api/blogs/${testBlogId}`).set("Authorization", token).expect(200);
+    await api
+      .delete(`/api/blogs/${testBlogId}`)
+      .set("Authorization", token)
+      .expect(200);
 
     const result = await api
       .get("/api/blogs")
@@ -261,11 +263,14 @@ describe("Testing the backend", () => {
       .expect("Content-Type", /application\/json/)
       .expect(200);
 
+    assert.deepStrictEqual(
+      findUpdatedTestBlog.body[0].author,
+      updatedTestBlog.author
+    );
     assert.deepStrictEqual(findUpdatedTestBlog.body[0].author, updatedTestBlog.author);
   });
 
   after(async () => {
-    await Blog.deleteMany();
     await mongoose.connection.close();
   });
 });

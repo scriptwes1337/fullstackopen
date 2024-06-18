@@ -83,7 +83,7 @@ router.put("/:id", async (req, res, next) => {
       url: req.body.url,
       likes: req.body.likes,
       id: req.body.id,
-      user: req.body.user.id
+      user: req.body.user?.id
     }
     const data = await Blog.findByIdAndUpdate(requestedId, updatedBlog)
     res.status(200).json(data);
