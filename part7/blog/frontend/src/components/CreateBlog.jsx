@@ -1,4 +1,5 @@
 import React from "react";
+import { Button, Form } from "react-bootstrap";
 
 export const CreateBlog = ({
   title,
@@ -13,16 +14,16 @@ export const CreateBlog = ({
   return (
     <>
       <h2>create new</h2>
-      <form
+      <Form
         data-testid="create-blog-form"
         onSubmit={(e) => {
           e.preventDefault();
           handleCreateBlog({ title, author, url });
         }}
       >
-        <div>
-          <label htmlFor="createBlogTitleInput">title:</label>
-          <input
+        <Form.Group>
+          <Form.Label htmlFor="createBlogTitleInput">title:</Form.Label>
+          <Form.Control
             type="text"
             name="createBlogTitleInput"
             id="createBlogTitleInput"
@@ -30,10 +31,10 @@ export const CreateBlog = ({
             onChange={({ target }) => setTitle(target.value)}
             data-testid="newBlogTitleInput"
           />
-        </div>
-        <div>
-          <label htmlFor="createBlogAuthorInput">author:</label>
-          <input
+        </Form.Group>
+        <Form.Group>
+          <Form.Label htmlFor="createBlogAuthorInput">author:</Form.Label>
+          <Form.Control
             type="text"
             name="createBlogAuthorInput"
             id="createBlogAuthorInput"
@@ -41,10 +42,10 @@ export const CreateBlog = ({
             onChange={({ target }) => setAuthor(target.value)}
             data-testid="newBlogAuthorInput"
           />
-        </div>
-        <div>
-          <label htmlFor="createBlogUrlInput">url:</label>
-          <input
+        </Form.Group>
+        <Form.Group>
+          <Form.Label htmlFor="createBlogUrlInput">url:</Form.Label>
+          <Form.Control
             type="text"
             name="createBlogUrlInput"
             id="createBlogUrlInput"
@@ -52,14 +53,14 @@ export const CreateBlog = ({
             onChange={({ target }) => setUrl(target.value)}
             data-testid="newBlogUrlInput"
           />
-        </div>
-        <div>
-          <button type="submit" data-testid="newBlogCreateBtn">
+        </Form.Group>
+        <Form.Group>
+          <Button variant="primary" className="m-1" type="submit" data-testid="newBlogCreateBtn">
             create
-          </button>
-        </div>
+          </Button>
+        </Form.Group>
         {children}
-      </form>
+      </Form>
     </>
   );
 };

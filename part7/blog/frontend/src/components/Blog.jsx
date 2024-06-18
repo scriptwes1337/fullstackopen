@@ -8,15 +8,8 @@ export const Blog = ({ blog }) => {
     setBlogData(blog);
   }, [blog]);
 
-  const style = {
-    padding: "5px",
-    border: "1px solid black"
-  };
-
   return (
-    <div>
-      <p style={style}><Link to={`/blogs/${blogData.id}`}>{blogData.title}</Link></p>
-    </div>
+      <Link to={`/blogs/${blogData.id}`} className="text-light">{blogData.title}</Link>
   );
 };
 

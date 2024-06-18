@@ -13,6 +13,7 @@ import { Route, Routes, Link } from "react-router-dom";
 import { Users } from "./components/Users";
 import { User } from "./components/User";
 import IndividualBlog from "./components/IndividualBlog";
+import { Alert, Button, Navbar, Container, Row, Table } from "react-bootstrap";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -140,42 +141,49 @@ const App = () => {
   };
 
   const padding = {
-    paddingRight: 5,
+    paddingRight: "10px",
   };
 
   return (
-    <div>
+    <div className="container">
       {notification === "" ? null : (
-        <p
-          style={{
-            color: "grey",
-            fontSize: "1.5rem",
-            backgroundColor: "lightgrey",
-            padding: "0.8rem",
-            border: "2px grey solid",
-            borderRadius: "10px",
-          }}
-          data-testid="notification"
-        >
+        <Alert variant="dark" data-testid="notification">
           {notification}
-        </p>
+        </Alert>
       )}
-
-      <div>
-        <Link to="/" style={padding}>
-          blogs
-        </Link>
-        <Link to="/users" style={padding}>
-          users
-        </Link>
-        <span>
-          {user.name} is logged in
-          <button onClick={handleLogout} data-testid="logoutBtn">
-            logout
-          </button>
-        </span>
-      </div>
-      <h2>blogs</h2>
+      {user.username ? (
+        <Navbar className="bg-dark px-5">
+          <Container>
+            <Row className="d-flex w-100 text-center">
+              <div className="col-3">
+                <Link to="/" style={padding} className="text-light">
+                  blogs
+                </Link>
+              </div>
+              <div className="col-3">
+                <Link to="/users" style={padding} className="text-light">
+                  users
+                </Link>
+              </div>
+              <div class="col-3">
+                <span style={padding} className="text-light">
+                  {user.name} is logged in
+                </span>
+              </div>
+              <div class="col-3">
+                <Button
+                  onClick={handleLogout}
+                  style={padding}
+                  variant="light"
+                  data-testid="logoutBtn"
+                >
+                  logout
+                </Button>
+              </div>
+            </Row>
+          </Container>
+        </Navbar>
+      ) : null}
       <Routes>
         <Route
           path="/blogs/:id"
@@ -194,6 +202,7 @@ const App = () => {
           element={
             isAuth ? (
               <>
+                <h2>blogs</h2>
                 {showNewBlogForm ? (
                   <CreateBlog
                     title={title}
@@ -204,19 +213,37 @@ const App = () => {
                     setUrl={setUrl}
                     handleCreateBlog={handleCreateBlog}
                   >
-                    <button onClick={handleShowNewBlogForm}>cancel</button>
+                    <Button
+                      variant="danger"
+                      className="m-1"
+                      onClick={handleShowNewBlogForm}
+                    >
+                      cancel
+                    </Button>
                   </CreateBlog>
                 ) : (
-                  <button
+                  <Button
+                    variant="primary"
+                    className="my-2"
                     onClick={handleShowNewBlogForm}
                     data-testid="newBlogBtn"
                   >
                     new blog
-                  </button>
+                  </Button>
                 )}
-                {blogs.map((blog) =>
-                  blog ? <Blog key={blog.id} blog={blog} /> : null,
-                )}
+                <Table striped bordered variant="dark">
+                  <tbody>
+                    {blogs.map((blog) =>
+                      blog ? (
+                        <tr>
+                          <td>
+                            <Blog key={blog.id} blog={blog} />{" "}
+                          </td>
+                        </tr>
+                      ) : null,
+                    )}
+                  </tbody>
+                </Table>
               </>
             ) : (
               <LoginForm

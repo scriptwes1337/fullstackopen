@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 export const Users = () => {
@@ -12,10 +13,10 @@ export const Users = () => {
   return (
     <div>
       <h2>Users</h2>
-      <table>
+      <Table variant="dark" striped bordered>
         <thead>
           <tr>
-            <th></th>
+            <th>username</th>
             <th>blogs created</th>
           </tr>
         </thead>
@@ -23,13 +24,13 @@ export const Users = () => {
           {users.map((user, index) => (
             <tr key={index}>
               <td>
-                <Link to={`/users/${user.id}`}>{user.name}</Link>
+                <Link to={`/users/${user.id}`} className="text-light">{user.name}</Link>
               </td>
               <td>{user.blogs.length}</td>
             </tr>
           ))}
         </tbody>
-      </table>
+      </Table>
     </div>
   );
 };

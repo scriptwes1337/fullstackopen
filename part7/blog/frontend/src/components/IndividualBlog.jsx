@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { setNotification } from "../reducers/notificationReducer";
 import { useDispatch } from "react-redux";
+import { Button, Form } from "react-bootstrap";
 
 export const IndividualBlog = ({ handleLike, user, deleteBlog }) => {
   const [blogData, setBlogData] = useState(null);
@@ -33,19 +34,22 @@ export const IndividualBlog = ({ handleLike, user, deleteBlog }) => {
   };
 
   const handleComment = async (e) => {
-      e.preventDefault();
-      try {
-        await axios.put(`/api/blogs/${id}/comments`, {
-          comment: e.target.comment.value,
-        });
-        const updatedBlogData = { ...blogData };
-        updatedBlogData.comments = [...updatedBlogData.comments, e.target.comment.value];
-        setBlogData(updatedBlogData);
-        e.target.comment.value = "";
-      } catch (err) {
-        dispatch(setNotification(err.message));
-      }
-    };
+    e.preventDefault();
+    try {
+      await axios.put(`/api/blogs/${id}/comments`, {
+        comment: e.target.comment.value,
+      });
+      const updatedBlogData = { ...blogData };
+      updatedBlogData.comments = [
+        ...updatedBlogData.comments,
+        e.target.comment.value,
+      ];
+      setBlogData(updatedBlogData);
+      e.target.comment.value = "";
+    } catch (err) {
+      dispatch(setNotification(err.message));
+    }
+  };
 
   return (
     <div>
@@ -57,21 +61,23 @@ export const IndividualBlog = ({ handleLike, user, deleteBlog }) => {
           <a href={blogData.url}>{blogData.url}</a>
           <p>
             {blogData.likes} likes{" "}
-            <button onClick={handleLikeClick}>like</button>
+            <Button variant="primary" onClick={handleLikeClick}>
+              like
+            </Button>
           </p>
           <p>added by {blogData.user.username}</p>
           {blogData.user.username === user.username ? (
             <div>
-              <button data-testid="deleteBtn" onClick={handleDelete}>
+              <Button variant="danger" data-testid="deleteBtn" onClick={handleDelete}>
                 delete
-              </button>
+              </Button>
             </div>
           ) : null}
-          <b>comments</b>
-          <form onSubmit={handleComment}>
-            <input type="text" name="comment"></input>
-            <button type="submit">add comment</button>
-          </form>
+          <strong>comments</strong>
+          <Form onSubmit={handleComment}>
+            <Form.Control type="text" name="comment"></Form.Control>
+            <Button variant="primary" className="m-1" type="submit">add comment</Button>
+          </Form>
 
           <ul>
             {blogData.comments.map((comment) => {
