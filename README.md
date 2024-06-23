@@ -178,7 +178,7 @@ Asterisk denotes an optional exercise
 - [x] 8.4
 - [x] 8.5
 - [x] 8.6
-- [ ] 8.7
+- [x] 8.7
 - [ ] 8.8
 - [ ] 8.9
 - [ ] 8.10
