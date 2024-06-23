@@ -173,7 +173,7 @@ Asterisk denotes an optional exercise
 
 ### Part 8 - GraphQL
 - [x] 8.1
-- [ ] 8.2
+- [x] 8.2
 - [ ] 8.3
 - [ ] 8.4
 - [ ] 8.5
