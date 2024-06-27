@@ -277,7 +277,7 @@ Asterisk denotes an optional exercise
 - [ ] 11.20
 - [ ] 11.21
 
-### Part 12 - Contaijners
+### Part 12 - Containers
 - [ ] 12.1
 - [ ] 12.2
 - [ ] 12.3
