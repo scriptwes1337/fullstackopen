@@ -255,7 +255,7 @@ Asterisk denotes an optional exercise
 - [ ] 10.27
 
 ### Part 11 - CI/CD
-- [ ] 11.1
+- [x] 11.1
 - [ ] 11.2
 - [ ] 11.3
 - [ ] 11.4
