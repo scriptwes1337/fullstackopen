@@ -1,4 +1,4 @@
-export {}
+export {};
 
 interface Result {
   periodLength: number;
@@ -10,7 +10,7 @@ interface Result {
   average: number;
 }
 
-const calculateExercises = (
+export const calculateExercises = (
   dailyExerciseHours: number[],
   dailyTargetExerciseHours: number
 ): Result => {
@@ -82,6 +82,10 @@ try {
     process.argv
   );
   console.log(calculateExercises(dailyExerciseHours, dailyTargetExerciseHours));
-} catch (error: any) {
-  console.error("Error:", error.message);
+} catch (error: unknown) {
+ if (error instanceof Error) {
+   console.error("Error:", error.message);
+ } else {
+   console.error("An unknown error occurred.");
+ }
 }
