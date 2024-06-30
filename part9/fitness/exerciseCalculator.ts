@@ -82,6 +82,6 @@ try {
     process.argv
   );
   console.log(calculateExercises(dailyExerciseHours, dailyTargetExerciseHours));
-} catch (error) {
+} catch (error: any) {
   console.error("Error:", error.message);
 }

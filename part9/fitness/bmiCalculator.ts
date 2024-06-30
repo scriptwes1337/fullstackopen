@@ -1,6 +1,6 @@
 export {};
 
-const calculateBmi = (heightInCm: number, weightInKg: number): string => {
+export const calculateBmi = (heightInCm: number, weightInKg: number): string => {
   const heightInM = heightInCm / 100;
   const bmi = weightInKg / (heightInM * heightInM);
 
@@ -28,6 +28,9 @@ const calculateBmi = (heightInCm: number, weightInKg: number): string => {
   if (bmi >= 40) {
     return "Obese (Class 3)";
   }
+
+  // Default return in case bmi does not match any condition (though it should always match)
+  return "Unknown BMI Category";
 };
 
 const parseArguments = (
@@ -58,6 +61,10 @@ const parseArguments = (
 try {
   const { heightInCm, weightInKg } = parseArguments(process.argv);
   console.log(calculateBmi(heightInCm, weightInKg));
-} catch (error) {
-  console.error("Error:", error.message);
+} catch (error: any) {
+  if (error instanceof Error) {
+    console.error("Error:", error.message);
+  } else {
+    console.error("An unknown error occurred.");
+  }
 }
