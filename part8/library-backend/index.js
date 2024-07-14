@@ -1,31 +1,32 @@
-const { ApolloServer } = require('@apollo/server')
-const { startStandaloneServer } = require('@apollo/server/standalone')
+const { ApolloServer } = require("@apollo/server");
+const { startStandaloneServer } = require("@apollo/server/standalone");
+const { v4: uuidv4 } = require("uuid");
 
 let authors = [
   {
-    name: 'Robert Martin',
+    name: "Robert Martin",
     id: "afa51ab0-344d-11e9-a414-719c6709cf3e",
     born: 1952,
   },
   {
-    name: 'Martin Fowler',
+    name: "Martin Fowler",
     id: "afa5b6f0-344d-11e9-a414-719c6709cf3e",
-    born: 1963
+    born: 1963,
   },
   {
-    name: 'Fyodor Dostoevsky',
+    name: "Fyodor Dostoevsky",
     id: "afa5b6f1-344d-11e9-a414-719c6709cf3e",
-    born: 1821
+    born: 1821,
   },
-  { 
-    name: 'Joshua Kerievsky', // birthyear not known
+  {
+    name: "Joshua Kerievsky", // birthyear not known
     id: "afa5b6f2-344d-11e9-a414-719c6709cf3e",
   },
-  { 
-    name: 'Sandi Metz', // birthyear not known
+  {
+    name: "Sandi Metz", // birthyear not known
     id: "afa5b6f3-344d-11e9-a414-719c6709cf3e",
   },
-]
+];
 
 /*
  * Suomi:
@@ -39,59 +40,59 @@ let authors = [
  * Spanish:
  * Podría tener más sentido asociar un libro con su autor almacenando la id del autor en el contexto del libro en lugar del nombre del autor
  * Sin embargo, por simplicidad, almacenaremos el nombre del autor en conexión con el libro
-*/
+ */
 
 let books = [
   {
-    title: 'Clean Code',
+    title: "Clean Code",
     published: 2008,
-    author: 'Robert Martin',
+    author: "Robert Martin",
     id: "afa5b6f4-344d-11e9-a414-719c6709cf3e",
-    genres: ['refactoring']
+    genres: ["refactoring"],
   },
   {
-    title: 'Agile software development',
+    title: "Agile software development",
     published: 2002,
-    author: 'Robert Martin',
+    author: "Robert Martin",
     id: "afa5b6f5-344d-11e9-a414-719c6709cf3e",
-    genres: ['agile', 'patterns', 'design']
+    genres: ["agile", "patterns", "design"],
   },
   {
-    title: 'Refactoring, edition 2',
+    title: "Refactoring, edition 2",
     published: 2018,
-    author: 'Martin Fowler',
+    author: "Martin Fowler",
     id: "afa5de00-344d-11e9-a414-719c6709cf3e",
-    genres: ['refactoring']
+    genres: ["refactoring"],
   },
   {
-    title: 'Refactoring to patterns',
+    title: "Refactoring to patterns",
     published: 2008,
-    author: 'Joshua Kerievsky',
+    author: "Joshua Kerievsky",
     id: "afa5de01-344d-11e9-a414-719c6709cf3e",
-    genres: ['refactoring', 'patterns']
-  },  
+    genres: ["refactoring", "patterns"],
+  },
   {
-    title: 'Practical Object-Oriented Design, An Agile Primer Using Ruby',
+    title: "Practical Object-Oriented Design, An Agile Primer Using Ruby",
     published: 2012,
-    author: 'Sandi Metz',
+    author: "Sandi Metz",
     id: "afa5de02-344d-11e9-a414-719c6709cf3e",
-    genres: ['refactoring', 'design']
+    genres: ["refactoring", "design"],
   },
   {
-    title: 'Crime and punishment',
+    title: "Crime and punishment",
     published: 1866,
-    author: 'Fyodor Dostoevsky',
+    author: "Fyodor Dostoevsky",
     id: "afa5de03-344d-11e9-a414-719c6709cf3e",
-    genres: ['classic', 'crime']
+    genres: ["classic", "crime"],
   },
   {
-    title: 'Demons',
+    title: "Demons",
     published: 1872,
-    author: 'Fyodor Dostoevsky',
+    author: "Fyodor Dostoevsky",
     id: "afa5de04-344d-11e9-a414-719c6709cf3e",
-    genres: ['classic', 'revolution']
+    genres: ["classic", "revolution"],
   },
-]
+];
 
 /*
   you can remove the placeholder query once your first one has been implemented 
@@ -120,7 +121,21 @@ const typeDefs = `
     allBooks(author: String, genre: String): [Book!]!
     allAuthors: [Author!]!
   }
-`
+
+  type Mutation {
+    addBook(
+      title: String!
+      published: Int!
+      author: String!
+      genres: [String!]!
+    ): Book
+
+    editAuthor(
+      name: String!,
+      setBornTo: Int!
+    ): Author
+  }
+`;
 
 const resolvers = {
   Query: {
@@ -129,32 +144,70 @@ const resolvers = {
     authorCount: () => authors.length,
     allBooks: (root, args) => {
       if (args.author && args.genre) {
-        return books.filter(book => book.author === args.author && book.genres.includes(args.genre))
-      }
-      else if (args.author) {
-        return books.filter(book => book.author === args.author)
-      }
-      else if (args.genre) {
-        return books.filter(book => book.genres.includes(args.genre));
-      }
-      else {
-        return books
+        return books.filter(
+          (book) =>
+            book.author === args.author && book.genres.includes(args.genre)
+        );
+      } else if (args.author) {
+        return books.filter((book) => book.author === args.author);
+      } else if (args.genre) {
+        return books.filter((book) => book.genres.includes(args.genre));
+      } else {
+        return books;
       }
     },
-    allAuthors: () => authors
+    allAuthors: () => authors,
+  },
+  Mutation: {
+    addBook: (root, args) => {
+      const book = { ...args, id: uuidv4() };
+      books.push(book);
+
+      let existingAuthor = authors.find(
+        (author) => author.name === book.author
+      );
+
+      if (!existingAuthor) {
+        const newAuthor = {
+          name: book.author,
+          born: null,
+          bookCount: 1,
+          id: uuidv4(),
+        };
+
+        authors.push(newAuthor);
+        existingAuthor = newAuthor;
+      } else {
+        existingAuthor.bookCount++;
+      }
+
+      return book;
+    },
+    editAuthor: (root, args) => {
+      const { name, setBornTo } = args;
+      const authorToEdit = authors.find((author) => author.name === name);
+
+      if (!authorToEdit) {
+        return null
+      }
+
+      authorToEdit.born = setBornTo;
+      return authorToEdit;
+    },
   },
   Author: {
-    bookCount: (root) => books.filter(book => book.author === root.name).length
-  }
-}
+    bookCount: (root) =>
+      books.filter((book) => book.author === root.name).length,
+  },
+};
 
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-})
+});
 
 startStandaloneServer(server, {
   listen: { port: 4000 },
 }).then(({ url }) => {
-  console.log(`Server ready at ${url}`)
-})
+  console.log(`Server ready at ${url}`);
+});
