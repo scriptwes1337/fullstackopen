@@ -16,7 +16,7 @@ export const ALL_BOOKS_NO_GENRE = gql`
       title
       published
       author
-      id
+      _id
     }
   }
 `;
@@ -36,7 +36,7 @@ export const CREATE_BOOK = gql`
     ) {
       author
       genres
-      id
+      _id
       published
       title
     }
@@ -48,7 +48,7 @@ export const EDIT_AUTHOR = gql`
     editAuthor(name: $name, setBornTo: $setBornTo) {
       bookCount
       born
-      id
+      _id
       name
     }
   }

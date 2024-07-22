@@ -54,7 +54,6 @@ const Authors = (props) => {
             </tr>
           ))}
         </tbody>
-        {/* hi */}
       </table>
 
       <h2>Set birthyear</h2>
@@ -66,12 +65,13 @@ const Authors = (props) => {
             name="birthYearNameInput"
             id="birthYearNameInput"
             onClick={({ target }) => setBirthYearName(target.value)}
+            defaultValue="default"
           >
-            <option disabled selected value>
+            <option disabled value="default">
               -- select an option --{" "}
             </option>
             {authors.map((author) => {
-              return <option>{author.name}</option>;
+              return <option key={author.name}>{author.name}</option>;
             })}
           </select>
         </div>
