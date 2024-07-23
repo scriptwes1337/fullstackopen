@@ -29,7 +29,12 @@ const Authors = (props) => {
   const submit = async (event) => {
     event.preventDefault();
 
-    editAuthor({ variables: { name: birthYearName, setBornTo: birthYearBorn } });
+    const token = localStorage.getItem("token")
+    if (!token) {
+      return alert("Invalid jwt")
+    }
+
+    editAuthor({ variables: { name: birthYearName, setBornTo: birthYearBorn, token  } });
     console.log("author edited...");
     
     setBirthYearName("");
