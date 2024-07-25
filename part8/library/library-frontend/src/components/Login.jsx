@@ -1,14 +1,14 @@
-import React from "react";
-import { LOGIN } from "../queries";
-import { useMutation } from "@apollo/client";
+import React, { useEffect } from "react";
+import { LOGIN, ME } from "../queries";
+import { useMutation, useQuery } from "@apollo/client";
 
-export const Login = ({show, isLoggedIn, setIsLoggedIn}) => {
+export const Login = ({ show, isLoggedIn, setIsLoggedIn }) => {
   if (!show) {
     return null;
   }
 
   if (isLoggedIn) {
-    return <div>You are logged in</div>
+    return <div>You are logged in</div>;
   }
 
   const [login] = useMutation(LOGIN, {
@@ -19,7 +19,9 @@ export const Login = ({show, isLoggedIn, setIsLoggedIn}) => {
     onCompleted: (data) => {
       console.log("Logged in successfully, your JWT is:", data);
       localStorage.setItem("token", data.login.value);
+      setIsLoggedIn(true);
     },
+    refetchQueries: [{ query: ME }],
   });
 
   const handleLogin = (e) => {
@@ -31,7 +33,6 @@ export const Login = ({show, isLoggedIn, setIsLoggedIn}) => {
           password: e.target.loginPassword.value,
         },
       });
-      setIsLoggedIn(true)
     } catch (error) {
       console.log("Error logging in", error.message);
     }

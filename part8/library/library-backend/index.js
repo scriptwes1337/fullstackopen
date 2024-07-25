@@ -53,7 +53,7 @@ const typeDefs = `
     authorCount: Int!
     allBooks(author: String, genre: String): [Book!]!
     allAuthors: [Author!]!
-    me: User
+    me(token: String!): User
   }
 
   type Mutation {
@@ -111,6 +111,15 @@ const resolvers = {
     allAuthors: async () => {
       return Author.find();
     },
+    me: async (root, args) => {
+      try {
+        const decodedToken = jwt.verify(args.token, JWT_SECRET);
+        const user = await User.findById(decodedToken.id);
+        return user;
+      } catch (error) {
+        throw new GraphQLError("Invalid or expired token");
+      }
+    },
   },
   Mutation: {
     addBook: async (root, args) => {
@@ -155,7 +164,7 @@ const resolvers = {
     login: async (root, args) => {
       const { username, password } = args;
 
-      const user = User.findOne({ username });
+      const user = await User.findOne({ username });
       const passwordCorrect =
         user === null ? false : password === "123" ? true : false;
 
