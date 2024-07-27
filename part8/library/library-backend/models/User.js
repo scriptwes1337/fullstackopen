@@ -7,7 +7,7 @@ const schema = new mongoose.Schema({
     required: true,
     unique: true,
   },
-  favoriteGenre: String
+  favoriteGenre: String,
 });
 
 schema.plugin(uniqueValidator);

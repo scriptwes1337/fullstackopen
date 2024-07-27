@@ -42,7 +42,7 @@ const Books = ({ show, books }) => {
         setDisplayBooks(fetchBooksByGenre.data.allBooks);
       }
     } else {
-        setDisplayBooks(books);
+      setDisplayBooks(books);
     }
   }, [fetchBooksByGenre]);
 

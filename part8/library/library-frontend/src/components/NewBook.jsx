@@ -31,7 +31,7 @@ const NewBook = (props) => {
     if (!token) {
       return alert("Invalid jwt");
     }
-    
+
     createBook({ variables: { title, author, published, genres, token } });
     console.log("add book...");
 

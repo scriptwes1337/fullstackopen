@@ -12,7 +12,6 @@ const Authors = (props) => {
   const [birthYearName, setBirthYearName] = useState("");
   const [birthYearBorn, setBirthYearBorn] = useState("");
 
-
   const authors = allAuthors.data.allAuthors;
 
   const [editAuthor] = useMutation(EDIT_AUTHOR, {
@@ -29,14 +28,16 @@ const Authors = (props) => {
   const submit = async (event) => {
     event.preventDefault();
 
-    const token = localStorage.getItem("token")
+    const token = localStorage.getItem("token");
     if (!token) {
-      return alert("Invalid jwt")
+      return alert("Invalid jwt");
     }
 
-    editAuthor({ variables: { name: birthYearName, setBornTo: birthYearBorn, token  } });
+    editAuthor({
+      variables: { name: birthYearName, setBornTo: birthYearBorn, token },
+    });
     console.log("author edited...");
-    
+
     setBirthYearName("");
     setBirthYearBorn("");
   };

@@ -101,3 +101,20 @@ export const ME = gql`
     }
   }
 `;
+
+export const BOOK_ADDED = gql`
+  subscription BookAdded {
+    bookAdded {
+      title
+      published
+      author {
+        name
+        _id
+        born
+        bookCount
+      }
+      _id
+      genres
+    }
+  }
+`;
