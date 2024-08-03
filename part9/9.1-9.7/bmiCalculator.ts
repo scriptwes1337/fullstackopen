@@ -17,8 +17,8 @@ const parseBmiArguments = (args: string[]): HeightWeightValues => {
   }
 };
 
-const calculateBmi = (height: number, weight: number) => {
-  const bmi = weight / (height * height);
+export const calculateBmi = (height: number, weight: number) => {
+  const bmi = weight / (((height / 100) * height) / 100);
 
   let category: string;
 
@@ -39,8 +39,10 @@ const calculateBmi = (height: number, weight: number) => {
   } else {
     category = "Obese (Class III)";
   }
+  
+  let message: string = `Your BMI is ${bmi} - ${category}`;
 
-  return `Your BMI is: ${bmi} - ${category}`;
+  return message;
 };
 
 try {
