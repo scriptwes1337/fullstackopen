@@ -39,7 +39,7 @@ export const calculateBmi = (height: number, weight: number) => {
   } else {
     category = "Obese (Class III)";
   }
-  
+
   let message: string = `Your BMI is ${bmi} - ${category}`;
 
   return message;
