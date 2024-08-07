@@ -1,6 +1,6 @@
-import { Patient } from "../src/types";
+import { Gender, Patient } from "../src/types";
 
-const data: Patient[] = [
+const data = [
   {
     id: "d2773336-f723-11e9-8f0b-362b9e155667",
     name: "John McClane",
@@ -30,7 +30,7 @@ const data: Patient[] = [
     name: "Dana Scully",
     dateOfBirth: "1974-01-05",
     ssn: "050174-432N",
-    gender: "female",
+    gender: "Female",
     occupation: "Forensic Pathologist",
   },
   {
@@ -43,4 +43,15 @@ const data: Patient[] = [
   },
 ];
 
-export default data;
+const patientData: Patient[] =data.map((obj) => {
+    const gender: Gender = obj.gender.toLowerCase() === "male" ? Gender.Male :
+      obj.gender.toLowerCase() === "female" ? Gender.Female :
+      Gender.Other;
+
+    return {
+      ...obj,
+      gender
+    };
+  });
+
+export default patientData;
