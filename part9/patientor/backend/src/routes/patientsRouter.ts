@@ -3,6 +3,7 @@ import patientsService from "../services/patientsService";
 import { v4 as uuidv4 } from "uuid";
 import { isString } from "../utils";
 import patientData from "../../data/patientsData";
+import { Patient } from "../types";
 
 const router = express.Router();
 
@@ -39,11 +40,17 @@ router.post("/", (req, res) => {
 });
 
 router.get("/:id", (req, res) => {
-  const id = req.params["id"];
+  const id: string = req.params["id"];
 
-  const requestedPatient = patientData.find((patient) => patient.id === id);
+  const requestedPatient: Patient | undefined = patientData.find(
+    (patient) => patient.id === id
+  );
 
-  return res.status(200).json(requestedPatient)
+  if (!requestedPatient) {
+    return res.status(404).json({ error: "Patient not found" });
+  }
+
+  return res.status(200).json(requestedPatient);
 });
 
 export default router;

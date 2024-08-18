@@ -41,6 +41,7 @@ const addPatient = (
     ssn,
     gender: patientGender,
     occupation,
+    entries: []
   };
 
   data.push(newPatient);
