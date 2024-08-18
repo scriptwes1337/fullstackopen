@@ -50,7 +50,8 @@ const patientData: Patient[] =data.map((obj) => {
 
     return {
       ...obj,
-      gender
+      gender,
+      entries: []
     };
   });
 
