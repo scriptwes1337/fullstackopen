@@ -1,6 +1,7 @@
 import data from "../../data/patientsData";
 import patientData from "../../data/patientsData";
-import { Gender, NonSensitivePatientData, Patient } from "../types";
+import { Entry, EntryWithoutId, Gender, NonSensitivePatientData, Patient } from "../types";
+import { v4 as uuidv4 } from "uuid";
 
 const getAllPatients = (): Patient[] => {
   return patientData;
@@ -48,8 +49,26 @@ const addPatient = (
   return newPatient;
 };
 
+const addEntryToPatient = (patientId: string, entry: EntryWithoutId): Patient => {
+  const patient = patientData.find((p) => p.id === patientId);
+
+  if (!patient) {
+    throw new Error("Patient not found");
+  }
+
+  const newEntry: Entry = {
+    id: uuidv4(),
+    ...entry,
+  };
+
+  patient.entries.push(newEntry);
+
+  return patient;
+};
+
 export default {
   getAllPatients,
   getAllNonSensitivePatientData,
   addPatient,
+  addEntryToPatient
 };
